@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── PARCHMENT DESIGN TOKENS ─────────────────────────────── */
+:root {
+  /* Canvas */
+  --parchment:          #ECE9E0;   /* primary canvas — Anthropic page bg */
+  --parchment-warm:     #E8E3D8;   /* warm surface */
+  --parchment-cool:     #F5F2EC;   /* lifted surface / cards */
+  --parchment-deep:     #D6D0C4;   /* dividers / strong surface */
+
+  /* Ink */
+  --ink:                #141413;   /* near-black — Anthropic dark */
+  --ink-mid:            #3A3935;   /* secondary text */
+  --dust:               #B0AEA5;   /* muted text / labels */
+
+  /* ── MACKAYS LOGO COLOURS ───────────────────────────────── */
+  /* REPLACED: --terracotta (#D97757) → --crimson (#d43646)   */
+  /* REPLACED: --sky-dusty  (#6A9BCC) → --harvest-gold        */
+  --crimson:            #d43646;   /* Mackays logo red — primary accent / CTA */
+  --crimson-dark:       #b02a38;   /* hover / pressed state */
+  --crimson-pale:       #FAE8EA;   /* tinted background for crimson contexts */
+
+  --harvest-gold:       #f8d940;   /* Mackays logo yellow — callout / highlight */
+  --harvest-gold-dark:  #C9AA18;   /* darker gold for text on light bg */
+  --harvest-gold-pale:  #FEF8D4;   /* tinted background for gold contexts */
+
+  /* RETAINED: Field Sage — mediates between crimson + gold */
+  --sage-field:         #788C5D;   /* agricultural / environmental third accent */
+  --sage-light:         #A8BF90;   /* light sage */
+  --sage-pale:          #E8EEE0;   /* tinted sage background */
+
+  /* Typography */
+  --font-heading:       'Poppins', system-ui, sans-serif;
+  --font-body:          'Lora', Georgia, serif;
+  --font-mono:          'JetBrains Mono', monospace;
+
+  /* Geometry */
+  --radius-xs:          2px;
+  --radius-sm:          4px;
+  --radius-md:          6px;
+  --radius-lg:          10px;
+  --radius-xl:          16px;
+
+  --border:             1px solid var(--parchment-deep);
+  --border-light:       1px solid rgba(20,20,19,0.08);
+}
+
+body {
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
+* { box-sizing: border-box; }
+
+/* ─── ACCESSIBLE FOCUS RING ──────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--crimson);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* ─── REDUCED MOTION SAFEGUARD ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

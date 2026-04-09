@@ -1,15 +1,20 @@
-# Sprint: Phase 0 — Project Initialisation
+# Sprint: Phase 1 — Scaffold, Tokens, Fonts, Smooth Scroll, Nav, Footer
 Date: 2026-04-10
 
 ## Scope
-Create all project configuration files. No application code yet.
+Next.js 15 scaffold, Parchment design tokens in globals.css, fonts via next/font,
+Lenis smooth scroll, global Navigation and Footer components. No page content yet.
 
 ## Acceptance Criteria
-- [ ] CLAUDE.md exists in repo root with all sections
-- [ ] .claude/settings.json exists with permissions + TypeScript Stop hook
-- [ ] .claude/agents/evaluator.md exists
-- [ ] .gitignore excludes .env.local, .next/, node_modules/, .claude/worktrees/
-- [ ] docs/ contains both brief files
+- [ ] pnpm install succeeds
+- [ ] next build succeeds (empty app is fine)
+- [ ] All Parchment CSS variables in app/globals.css match docs/system-04-parchment-v2.html exactly
+- [ ] Poppins + Lora + JetBrains Mono loaded via next/font/google with CSS variables
+- [ ] Tailwind config extends colors and fontFamily with CSS var references
+- [ ] SmoothScrollProvider initialises Lenis, syncs with GSAP ticker, ScrollTrigger proxy set
+- [ ] Navigation renders on desktop and mobile, sticky, transitions to opaque on scroll
+- [ ] Footer renders with three-column layout, ink background, gradient bottom stripe
+- [ ] pnpm tsc --noEmit passes
 
 ## Definition of Done
-All files committed: git log shows the commit.
+All files committed. HANDOFF.md updated with next steps for Phase 2.

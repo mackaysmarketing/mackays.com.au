@@ -29,3 +29,10 @@ Thumbs.db
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
+
+
+# Contentlayer
+.contentlayer
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
