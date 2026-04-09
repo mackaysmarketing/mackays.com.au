@@ -5,6 +5,8 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getMotionFactors } from '@/lib/motion'
 import type { TimelineItem } from '@/content/types'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -26,25 +28,25 @@ export function StickyTimeline({
   const [activeYear, setActiveYear] = useState<string>(
     visibleItems[0]?.year ?? '',
   )
+  const prefersReducedMotion = useReducedMotion()
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
       if (prefersReducedMotion) {
         gsap.set('[data-timeline-item]', { opacity: 1, y: 0 })
+        setActiveYear(visibleItems[0]?.year ?? '')
         return
       }
 
-      itemRefs.current.forEach((el, index) => {
-        if (!el) return
+      const { y: yFactor, duration } = getMotionFactors()
 
+      // Per-item fade-in (not scrub — each entry plays once as it arrives).
+      itemRefs.current.forEach((el) => {
+        if (!el) return
         gsap.from(el, {
           opacity: 0,
-          y: 40,
-          duration: 0.8,
+          y: 40 * yFactor,
+          duration: 0.8 * duration,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: el,
@@ -52,17 +54,32 @@ export function StickyTimeline({
             toggleActions: 'play none none reverse',
           },
         })
+      })
 
+      // Year tracker — single ScrollTrigger with scrub:1 over the whole
+      // container, mapping progress → active index.
+      if (containerRef.current && visibleItems.length > 0) {
         ScrollTrigger.create({
-          trigger: el,
+          trigger: containerRef.current,
           start: 'top center',
           end: 'bottom center',
-          onEnter: () => setActiveYear(visibleItems[index]?.year ?? ''),
-          onEnterBack: () => setActiveYear(visibleItems[index]?.year ?? ''),
+          scrub: 1,
+          onUpdate: (self) => {
+            const progress = self.progress
+            const index = Math.min(
+              visibleItems.length - 1,
+              Math.max(0, Math.floor(progress * visibleItems.length)),
+            )
+            const nextYear = visibleItems[index]?.year ?? ''
+            setActiveYear((prev) => (prev === nextYear ? prev : nextYear))
+          },
         })
-      })
+      }
     },
-    { scope: containerRef, dependencies: [visibleItems.length] },
+    {
+      scope: containerRef,
+      dependencies: [prefersReducedMotion, visibleItems.length],
+    },
   )
 
   return (

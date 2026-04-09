@@ -35,10 +35,10 @@ export type ButtonProps = LinkProps | NativeButtonProps
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-crimson text-white hover:bg-crimson-dark active:scale-[0.98] shadow-[0_0_0_0_var(--crimson-pale)] hover:shadow-[0_0_0_4px_var(--crimson-pale)]',
+    'bg-crimson text-white hover:bg-crimson-dark hover:scale-[1.01] active:scale-[0.98] shadow-[0_0_0_0_var(--crimson-pale)] hover:shadow-[0_0_0_4px_var(--crimson-pale)]',
   secondary:
     'bg-transparent text-ink border border-parchment-deep hover:bg-parchment-warm hover:border-dust active:scale-[0.98]',
-  gold: 'bg-harvest-gold text-ink hover:bg-harvest-gold-dark active:scale-[0.98]',
+  gold: 'bg-harvest-gold text-ink hover:bg-harvest-gold-dark hover:scale-[1.01] active:scale-[0.98] shadow-[0_0_0_0_var(--harvest-gold-pale)] hover:shadow-[0_0_0_4px_var(--harvest-gold-pale)]',
   'ink-gold': 'bg-ink text-harvest-gold hover:bg-ink-mid active:scale-[0.98]',
   'ghost-link':
     'bg-transparent text-crimson border-b border-crimson rounded-none px-0 py-1 inline-block hover:text-crimson-dark hover:border-crimson-dark',

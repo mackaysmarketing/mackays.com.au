@@ -5,6 +5,8 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { MOBILE_BREAKPOINT_PX } from '@/lib/motion'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -25,13 +27,11 @@ export function SplitScreenParallax({
 }: SplitScreenParallaxProps) {
   const containerRef = useRef<HTMLElement>(null)
   const imageWrapRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-      const isMobile = window.innerWidth < 768
+      const isMobile = window.innerWidth < MOBILE_BREAKPOINT_PX
 
       if (prefersReducedMotion || isMobile || !imageWrapRef.current) return
 
@@ -46,7 +46,7 @@ export function SplitScreenParallax({
         },
       })
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   )
 
   const imageColumn = (

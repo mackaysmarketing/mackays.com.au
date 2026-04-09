@@ -4,6 +4,8 @@ import { useRef } from 'react'
 import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getMotionFactors } from '@/lib/motion'
 
 gsap.registerPlugin(useGSAP)
 
@@ -30,26 +32,25 @@ export function SplitHero({
   imageAlt,
 }: SplitHeroProps) {
   const containerRef = useRef<HTMLElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
       if (prefersReducedMotion) {
         gsap.set('[data-split-hero-right]', { x: 0, opacity: 1 })
         return
       }
 
+      const { y: yFactor, duration } = getMotionFactors()
+
       gsap.from('[data-split-hero-right]', {
-        x: 80,
+        x: 80 * yFactor,
         opacity: 0,
-        duration: 0.8,
+        duration: 0.8 * duration,
         ease: 'power2.out',
       })
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   )
 
   return (

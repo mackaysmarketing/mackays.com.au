@@ -105,7 +105,7 @@ export function HorizontalProduceTape({
               seed={slide.seed}
               alt={`${slide.name} — ${slide.tagline}`}
               sizes="(min-width: 768px) 580px, 80vw"
-              className="transition-transform duration-500 group-hover:scale-[1.04]"
+              className="transition-transform duration-500 group-hover:scale-[1.05]"
             />
             <div
               aria-hidden
@@ -113,7 +113,7 @@ export function HorizontalProduceTape({
             />
             <div className="absolute bottom-0 left-0 right-0 p-8 z-10 flex flex-col gap-3">
               <Badge variant="gold" label={slide.stat} />
-              <span className="font-heading font-bold text-[28px] text-white leading-tight transition-transform duration-200 group-hover:-translate-y-1">
+              <span className="font-heading font-bold text-[28px] text-white leading-tight transition-transform duration-200 group-hover:-translate-y-[3px]">
                 {slide.name}
               </span>
               <span className="font-body italic text-[15px] text-white/75 max-w-xs">

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import CountUp from 'react-countup'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 export interface StatCounterProps {
   value: number
@@ -24,13 +25,7 @@ export function StatCounter({
 }: StatCounterProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
-
-  useEffect(() => {
-    setPrefersReducedMotion(
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    )
-  }, [])
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     const el = ref.current

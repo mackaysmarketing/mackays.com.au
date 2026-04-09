@@ -5,6 +5,8 @@ import { gsap } from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Button } from '@/components/ui/Button'
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getMotionFactors } from '@/lib/motion'
 import type { CtaLink } from '@/content/types'
 
 gsap.registerPlugin(useGSAP)
@@ -36,6 +38,7 @@ export function KineticHero({
   imageAlt,
 }: KineticHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   /**
    * Split the headline into an ordered list of lines so that word-by-word
@@ -61,10 +64,6 @@ export function KineticHero({
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
       if (prefersReducedMotion) {
         gsap.set(
           [
@@ -73,42 +72,46 @@ export function KineticHero({
             '[data-kh-subheadline]',
             '[data-kh-cta]',
           ],
-          { opacity: 1, y: 0 },
+          { opacity: 1, y: 0, rotationX: 0 },
         )
         return
       }
 
+      const { stagger, y, duration } = getMotionFactors()
+
       gsap.from('[data-kh-eyebrow]', {
-        y: 20,
+        y: 20 * y,
         opacity: 0,
-        duration: 0.6,
+        duration: 0.6 * duration,
         ease: 'power3.out',
       })
       gsap.from('[data-kh-word]', {
-        y: 60,
+        y: 60 * y,
         opacity: 0,
-        stagger: 0.08,
+        rotationX: -15,
+        transformOrigin: '50% 100% -20',
+        stagger: 0.08 * stagger,
         ease: 'power3.out',
-        duration: 0.85,
+        duration: 0.85 * duration,
         delay: 0.15,
       })
       gsap.from('[data-kh-subheadline]', {
-        y: 30,
+        y: 30 * y,
         opacity: 0,
-        duration: 0.8,
+        duration: 0.8 * duration,
         ease: 'power3.out',
         delay: 0.55,
       })
       gsap.from('[data-kh-cta]', {
-        y: 20,
+        y: 20 * y,
         opacity: 0,
-        stagger: 0.1,
-        duration: 0.6,
+        stagger: 0.1 * stagger,
+        duration: 0.6 * duration,
         ease: 'power3.out',
         delay: 0.9,
       })
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   )
 
   return (

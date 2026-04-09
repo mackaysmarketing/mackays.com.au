@@ -1,154 +1,169 @@
-# Handoff: Phase 7 — Work With Us + Media + Contact
+# Handoff: Phase 8 — Animation Polish
 Date: 2026-04-10
-Session type: Build
+Session type: Polish
 
 ## What was completed
 
-### Work With Us — `app/work-with-us/page.tsx`
-Server component, 5 sections, every string sourced from `@/content`:
+Pure polish pass — **no new pages, no new content, no new section components**. Every change is an in-place refinement or a new small shared utility.
 
-1. **KineticHero** — `WORK_WITH_US.hero`, `imageSeed={30}`, primary CTA "See current roles" → Dayforce portal (already in content).
-2. **`<WhyMackaysPillars>`** — 4-column grid of `WORK_WITH_US.pillars` with alternating border-top accents (crimson / harvest-gold / sage-field / crimson, driven by each pillar's `accent` field) and oversized `01`–`04` background numbers in `text-ink/5`.
-3. **`<RoleCategories>`** — 3-column grid of all 6 `WORK_WITH_US.roles` with Lucide icons (`Sprout`, `Tractor`, `Package`, `Truck`, `Wrench`, `Users`) resolved through a typed `ICON_MAP`. Each card has a 40px `bg-parchment-deep` circle icon, title, description, and a "See roles →" CTA pulled from `roleCtaLabel`.
-4. **Current Opportunities** — section header + `<OpportunitiesAccordion>` (new Radix `Accordion.Root type="single" collapsible` client component). Each item's trigger shows the role title plus two Badges (location + type) on desktop, and `ChevronDown` rotates 180° via `group-data-[state=open]:rotate-180`. Content panel shows responsibilities + a gold `Button` ("Apply via Dayforce →") linking to the Dayforce href.
-5. **`<GoldCalloutBand>`** — "Always Recruiting" from `WORK_WITH_US.alwaysRecruiting`.
+### New shared infrastructure
 
-Metadata: `Work With Us | Mackays — Careers in Far North Queensland Farming` + description.
+**`src/hooks/useReducedMotion.ts`** — client hook.
+- Reads `window.matchMedia('(prefers-reduced-motion: reduce)')`, subscribes to `change` events, returns a reactive boolean.
+- SSR-safe: returns `false` on the server and on first client render (so hydration stays consistent), then sets the real value on mount.
+- Cleans up the listener on unmount.
 
-### Media — `app/media/page.tsx` + `app/media/[slug]/page.tsx`
+**`src/lib/motion.ts`** — `getMotionFactors()` + `MOBILE_BREAKPOINT_PX`.
+- Single source of truth for the mobile breakpoint (768 px, matching Tailwind `md`).
+- `getMotionFactors()` returns `{ isMobile, stagger, y, duration }` — all `1` on desktop, `{ 0.5, 0.6, 0.8 }` on mobile respectively. Lets every GSAP callback scale its intensity down on phones with a one-liner.
 
-**Listing page (`app/media/page.tsx`)** — server component:
-1. Static header (`h-[45vh] min-h-[360px] bg-parchment-warm`) — NO entry animation per brief. Eyebrow + `clamp(40px,6vw,64px)` headline + subheadline from `MEDIA.hero`.
-2. 3-column press-release grid (`grid-cols-1 md:grid-cols-3 gap-8`) reading from `MEDIA.pressReleases`. Each card: JetBrains-Mono crimson date (formatted via the new `formatDate` helper in AU English), Poppins headline `line-clamp-2`, Lora excerpt `line-clamp-3`, "Read more →" Link to `/media/${slug}`.
-3. Media contact block (`py-16 text-center border-t`) — eyebrow + crimson email link + tel link from `MEDIA.mediaContact`.
+**`src/components/layout/PageTransition.tsx`** — client component.
+- Framer Motion `AnimatePresence mode="wait" initial={false}` keyed on `usePathname()`.
+- `initial={{ opacity: 0, y: 12 }}` → `animate={{ opacity: 1, y: 0 }}` → `exit={{ opacity: 0, y: -12 }}`, `duration: 0.25`, ease `[0, 0, 0.2, 1]`.
+- Automatically honours `prefers-reduced-motion` because the `MotionConfig reducedMotion="user"` added in Phase 7 (to `SmoothScrollProvider`) wraps the whole subtree. No extra guard needed in this component.
+- Wired into `app/layout.tsx` so that `{children}` is wrapped in `<PageTransition>` **inside** `<main>`, leaving `<Navigation>` and `<Footer>` untouched by the transition.
 
-**Article page (`app/media/[slug]/page.tsx`)** — dynamic server component:
-- `generateStaticParams()` over `MEDIA.pressReleases.map(pr => pr.slug)` → 3 static routes prerendered: `/media/2022-iqf-expansion`, `/media/2024-tr4-free`, `/media/2025-fourth-generation`.
-- `generateMetadata()` returns `${pr.headline} | Mackays` + excerpt as description.
-- `notFound()` when the slug isn't in the content.
-- Layout: `max-w-2xl mx-auto` Lora prose article with back-link, mono date, headline, italic excerpt, then paragraphs rendered from `pr.body`. `renderParagraphs()` splits on `\n\s*\n` so each prose paragraph becomes a `<p>` in Lora 17px text.
-- Footer: "← All news" ghost-link + "Media contact →" secondary button.
+### Every animated component now consumes the shared hook + mobile factors
 
-**Three MDX source files** created under `content/media/` as the authoring surface:
-- `2022-iqf-expansion.mdx`
-- `2024-tr4-free.mdx`
-- `2025-fourth-generation.mdx`
+Grep confirms **zero `window.matchMedia('(prefers-reduced-motion: reduce)')` calls remain in `src/`** — the hook is the single source of truth.
 
-Each has full frontmatter (`slug`, `title`, `date`, `excerpt`) and a markdown body matching `MEDIA.pressReleases`. Per the Phase 6 handoff recommendation, the slug page reads from `MEDIA.pressReleases` directly rather than parsing MDX at runtime — we avoided the Contentlayer2 / React 19 upgrade detour, and content stays type-safe. The MDX files are the canonical authoring surface for content editors; a future phase can wire a parse step if the CMS workflow demands it.
+Eleven files refactored to `useReducedMotion()` + `useGSAP({ dependencies: [prefersReducedMotion] })` where applicable:
 
-Metadata (listing): `Media | Mackays — News From the Farm` + description.
+- `src/providers/SmoothScrollProvider.tsx` — Lenis initialisation re-runs when the user toggles the preference; `useEffect` now depends on `prefersReducedMotion` and tears Lenis down cleanly. `MotionConfig reducedMotion="user"` stays in place (Phase 7).
+- `src/components/layout/Navigation.tsx` — scroll listener attaches only when motion is allowed; toggling reduced-motion mid-session tears down the listener and snaps the nav to its opaque state.
+- `src/components/ui/StatCounter.tsx` — drops its local `useState(setPrefersReducedMotion)` in favour of the hook.
+- `src/components/sections/KineticHero.tsx` — reads the hook, passes it to `useGSAP` as a dependency, and scales `y`, `stagger`, `duration` by `getMotionFactors()`.
+- `src/components/sections/SplitScreenParallax.tsx` — hook + dependency; parallax stays skipped on mobile (`window.innerWidth < MOBILE_BREAKPOINT_PX`) exactly as Phase 2 intended, now pulled from the shared constant.
+- `src/components/sections/LivingPhotoGrid.tsx` — hook + dependency + mobile factors on `stagger` and `duration`.
+- `src/components/sections/BentoProduceGrid.tsx` — hook + dependency + mobile factors on `stagger`, `y`, `duration`.
+- `src/components/sections/SupplyChainExplainer.tsx` — hook + dependency + mobile factors on step entry stagger/y/duration + connector stagger/duration.
+- `src/components/sections/StickyTimeline.tsx` — see next section.
+- `src/components/home/BrandStatement.tsx` — hook + dependency + mobile factors.
+- `src/components/our-story/SplitHero.tsx` — hook + dependency + mobile factors.
 
-### Contact — `app/contact/page.tsx`
-Server component composing a header, two-column form+sidebar layout, and member-badges strip:
+For every `useGSAP` refactor:
+- The callback reads `prefersReducedMotion` from the closure (no extra `window.matchMedia` call inside the callback)
+- The `dependencies` array includes `prefersReducedMotion` so the setup re-runs (and `useGSAP` cleans up the previous tweens + ScrollTriggers) when the user toggles the preference
+- When the hook is `true`, the callback calls `gsap.set(...)` on the animated selectors to snap them to their final state, then returns — no tweens, no triggers
+- When `false`, the callback multiplies every raw `y`, `stagger`, `duration` literal by its mobile factor so phones get a gentler version
 
-1. **Header** — `h-[40vh] min-h-[320px] bg-parchment flex items-end pb-12`, `CONTACT.headline` + `CONTACT.subheadline`.
-2. **Two-column**: `grid md:grid-cols-[3fr_2fr] gap-16`:
-   - **Left — `<ContactForm>`** (new client component, see below).
-   - **Right — sidebar**: three `CONTACT.offices` cards (Farming Office / Marketing / Retail & Trade) each with a title, optional `lines[]`, a crimson mailto link, and optional tel link. Below the cards, a static `<QldFarmMap markers={[FARM_MARKERS[0]]} interactionDisabled>` — the Phase 2 map component already supported `interactionDisabled` and falls back to a neutral panel when `NEXT_PUBLIC_MAPBOX_TOKEN` isn't set, so no change was needed.
-3. **Member badges** — centred row (`flex justify-center gap-4 flex-wrap`) of `CONTACT.badges` rendered as neutral `Badge`s ("Foodbank Queensland Supporter", "ABGC Member", "Avocados Australia Member") with a small uppercase `badgesHeading` above.
+### StickyTimeline now uses `scrub: 1`
 
-Metadata: `Contact | Mackays — Farming, Marketing, Retail & Trade` + description.
+Previous implementation created a per-item `ScrollTrigger` with `onEnter` / `onEnterBack` callbacks that discretely set `activeYear` — functional, but not scrub-driven as the brief wants.
 
-### `<ContactForm>` — new client component
-`src/components/contact/ContactForm.tsx`.
+New implementation:
+- Per-item **fade-in** stays as `toggleActions: 'play none none reverse'` on each item's own ScrollTrigger (no scrub — each card plays once as it arrives, then reverses once as it leaves).
+- A **separate, single container-level ScrollTrigger** with `scrub: 1` covers the whole timeline (`start: 'top center'`, `end: 'bottom center'`). Its `onUpdate` maps `self.progress` → index → `activeYear`. The year text in the sticky left panel updates smoothly as the user scrolls through the items.
+- When reduced motion is active, `activeYear` is set to the first item's year and no ScrollTriggers are created.
+- `markers: true` is nowhere in the repo — grep confirms.
 
-- **React Hook Form + Zod + Framer Motion + lucide `CheckCircle2`**.
-- Validation schema comes from a **shared module** (`src/lib/contact-schema.ts`) so the client form and the server route validate identically — single source of truth.
-- Fields: Name (required, min 2) · Company (optional) · Email (required, email) · Phone (optional) · Enquiry type (required, `enum` over `CONTACT.form.enquiryOptions`) · Message (required, min 20).
-- Inputs styled with shared `INPUT_CLASS`/`LABEL_CLASS`/`ERROR_CLASS` constants (no repeated Tailwind soup): parchment background, parchment-deep border, `focus:border-crimson focus:ring-1 focus:ring-crimson`, `aria-invalid` toggled on error.
-- State machine: `idle → submitting → success | error`. `AnimatePresence mode="wait"` swaps the form for a harvest-gold confirmation card (CheckCircle2 + `form.successHeading` + `form.successBody`) on success, with a fade-in/slide transition. Error state renders an inline crimson-pale banner above the submit button.
-- Submit button label flips to `form.submittingLabel` while `isSubmitting` is true.
-- All strings (labels, placeholders, enquiry option labels, submit labels, success heading + body, error body, validation messages) come from `CONTACT.form.*` in content.
+### `KineticHero` word-reveal gains `rotationX: -15`
 
-### `/api/contact` — new server route
-`app/api/contact/route.ts`. Node runtime.
+GSAP Club licence is **not** confirmed — HANDOFF for Phase 7 documented this. Per the brief's fallback path, I added `rotationX: -15` + `transformOrigin: '50% 100% -20'` to the existing word-level `gsap.from('[data-kh-word]', ...)` tween. Gives a subtle depth tilt on each word's entry without requiring `SplitText` or a paid dependency. The reduced-motion path explicitly resets `rotationX: 0` via `gsap.set(...)` so there's no residual 3D artefact when the animation is skipped.
 
-- Parses the incoming JSON body with the **shared `contactSchema`**.
-- On validation failure: returns `400` with `{ success: false, error: 'validation_failed', fields: ZodError.flatten().fieldErrors }`.
-- If `RESEND_API_KEY` is missing: returns `503` with `{ success: false, error: 'service_not_configured' }` and logs a warning — so production forms fail loudly on a missing key rather than silently.
-- On Resend success: `200 { success: true }`. On Resend failure: `500 { success: false, error: 'send_failed' }`.
-- The email body is assembled by `formatEmailBody()` as plain-text lines, `from` is a `Mackays Website <website@{domain}>` address derived from `NEXT_PUBLIC_SITE_URL` (falls back to `mackays.com.au`), `to` is `SITE.emails.info`, and `replyTo` is the submitter's email so the inbox team can reply directly.
-- `subject` includes the human-readable enquiry label resolved via `CONTACT.form.enquiryOptions` — no hardcoded strings on the server either.
+No `@gsap/shockingly-good-js` added. The `.npmrc` path remains clean.
 
-### Shared utilities
-- **`src/lib/contact-schema.ts`** — exports `contactSchema` and the inferred `ContactFormValues` type, importing validation messages from `@/content`.
-- **`src/lib/format-date.ts`** — small pure helper that parses an ISO `YYYY-MM-DD` string and returns an AU-English long-form date (`"10 November 2022"`), safely handling the timezone as UTC.
+### Microinteraction audit
 
-### Content layer extensions
+**Button (`src/components/ui/Button.tsx`)**:
+- `primary`: added `hover:scale-[1.01]` (existing `active:scale-[0.98]` preserved). Existing crimson-pale hover ring shadow preserved.
+- `gold`: added `hover:scale-[1.01]` plus a new `shadow-[0_0_0_0_var(--harvest-gold-pale)] hover:shadow-[0_0_0_4px_var(--harvest-gold-pale)]` ring to match the primary pattern. `active:scale-[0.98]` preserved.
+- `secondary` / `ink-gold` / `ghost-link`: unchanged (intentional — they already had `active:scale-[0.98]` or a subtle underline).
+- `BASE_CLASSES` still has `transition-all duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed` from Phase 7.
+- The global `@media (prefers-reduced-motion: reduce)` rule in `globals.css` drops transition durations to `0.01ms`, so the hover scale snaps instantly for reduced-motion users — no explicit guard needed here.
 
-**`WORK_WITH_US`**
-- `sectionLabels: WorkWithUsSectionLabels` — eyebrow/headline for Why Mackays, Role Categories, and Current Opportunities
-- `roleCtaLabel: string` — "See roles" (used under each role card)
-- `opportunityApplyLabel: string` — "Apply via Dayforce" (used inside every accordion panel)
+**ProduceCard hover (both `HorizontalProduceTape` and `BentoProduceGrid`)**:
+- Image: `transition-transform duration-500 group-hover:scale-[1.05]` (was `scale-[1.04]` on HorizontalProduceTape, `scale-105` on BentoProduceGrid — both now explicitly `1.05` per the brief)
+- Title: `transition-transform duration-200 group-hover:-translate-y-[3px]` (was `-translate-y-1` / `4px` on both — now an explicit `3px` per the brief)
 
-**`CONTACT`** — rewritten to cover the entire form surface with zero inline strings:
-- `sidebarHeading: string` — "Direct lines"
-- `badgesHeading: string` — "Memberships & partnerships"
-- `form: ContactFormContent` — `heading`, `labels.{name, company, email, phone, enquiryType, message}`, `placeholders.{name, company, email, phone, enquiryTypePlaceholder, message}`, `enquiryOptions: { value, label }[]` (`general / retail / media / employment / other`), `submitLabel`, `submittingLabel`, `successHeading`, `successBody`, `errorBody`, `validation.{nameMin, emailInvalid, enquiryRequired, messageMin}`
-- New types: `ContactEnquiryType`, `ContactEnquiryOption`, `ContactFormLabels`, `ContactFormPlaceholders`, `ContactFormValidation`, `ContactFormContent`
-- New `WorkWithUsSectionLabels` interface
+**Navigation link underline**:
+- Desktop nav links (both the plain version and the dropdown trigger) now use a CSS `::after` pseudo-element via Tailwind arbitrary selectors:
+  - `relative ... after:absolute after:left-0 after:bottom-0 after:h-px after:w-full after:bg-crimson after:origin-left after:transition-transform after:duration-200`
+  - When **not active**: `after:scale-x-0 hover:after:scale-x-100` — the underline slides in from the left on hover.
+  - When **active**: `after:scale-x-100` — the underline is permanently visible.
+- Replaces the previous `border-b border-crimson` (active) / `border-transparent` (inactive) approach, which was binary and didn't slide. The underline still lands at the same visual position because both the old border and the new `::after` occupy the 1 px slot at `pb-1`.
+
+### `app/layout.tsx` update
+- Imports `PageTransition` from `@/components/layout/PageTransition`.
+- Wraps `{children}` with `<PageTransition>` inside `<main>` — `Navigation` and `Footer` are outside the transition as specified.
 
 ## Quality gates
-- `pnpm tsc --noEmit` — clean
-- `pnpm build` — clean. **19 routes total**:
-  - **Static (○)**: `/`, `/_not-found`, `/contact`, `/media`, `/our-produce`, `/our-story`, `/people-and-environment`, `/work-with-us`
-  - **SSG (●)**: 3 media slug pages + 6 crop pages
-  - **Dynamic (ƒ)**: `/api/contact`
-- Zero inline copy strings across the three new pages, the article page, the ContactForm or the API route. Every label, placeholder, enquiry option, error message, submit label, badge label, heading and CTA label reads from `@/content`.
-- `prefers-reduced-motion` inherited from Phase 2 sections (KineticHero, StickyTimeline etc.); the new Framer Motion success-state animation uses a 0.3s fade+slide that is small and doesn't violate the motion guard (Framer honours reduced-motion via `MotionConfig` — safe default).
-- Focus-visible handling on the Accordion triggers, form inputs (native browser focus), submit button (inherited from Button), media-listing "Read more" links, and the back-link on article pages.
-- Client/server validation parity via `src/lib/contact-schema.ts` — the same `contactSchema` runs on both sides, so malformed requests always fail the same way.
-- API route tolerates a missing `RESEND_API_KEY` (returns 503, logs a warning, doesn't crash) — important because the build machine's env may not have the secret.
+- `pnpm tsc --noEmit` — clean (exit 0)
+- `pnpm build` — clean, **19 routes** still prerendered exactly as in Phase 7 (8 static, 3 media SSG, 6 crop SSG, 1 dynamic `/api/contact`)
+- **Grep `prefers-reduced-motion` in `src/`**: no direct `window.matchMedia` calls remain (only the hook)
+- **Grep `markers:\s*true`** — no hits (production-safe, no ScrollTrigger markers rendered)
+- Zero GSAP console errors during the build run
+- No inline strings introduced anywhere — this is a polish phase
+- No new `any`, no `@ts-expect-error`, no `@ts-ignore`
+
+## Acceptance criteria — status
+- ✅ `prefers-reduced-motion` disables all motion — every animated component reads the hook, and passes it as a useGSAP dependency so toggles take effect live. Framer Motion usages (ContactForm success card, QldFarmMap popup, PageTransition) are globally covered by `MotionConfig reducedMotion="user"` from Phase 7. Native Tailwind transitions are covered by the `globals.css` `@media (prefers-reduced-motion: reduce)` rule.
+- ✅ Page transitions smooth, no flash — `AnimatePresence mode="wait" initial={false}` prevents the initial mount flash on first render.
+- ✅ No GSAP console errors in the production build.
+- ✅ No ScrollTrigger markers in production build — grep confirms.
 
 ## Known notes / decisions
-- **MDX files are authoring source, not the render source.** The brief asked for three MDX files AND an article page. Rather than add Contentlayer2 wiring (which has known React 19 compatibility friction) mid-phase, I created the three MDX source files in `content/media/` with full frontmatter + markdown bodies, AND kept the article page reading from `MEDIA.pressReleases` (which matches the MDX bodies). This keeps the content typed, the build deterministic, and the MDX files available for a future wiring step. Clearly documented so no one is confused by the dual surfaces.
-- **Shared contact schema module** (`src/lib/contact-schema.ts`). Rather than duplicating the Zod schema on client and server, both import from the same file. Validation messages in the schema come from `CONTACT.form.validation` so all error strings remain content-driven on both surfaces.
-- **Phone field is optional and NOT pattern-validated.** Keeping friction low on a first-touch form; if the inbox team wants stricter phone validation later, it's a one-line addition to the shared schema.
-- **503 on missing key, not silent success.** A build can succeed without `RESEND_API_KEY`, but a submitted form should not appear to succeed when no email was ever sent. The 503 + `service_not_configured` error is surfaced to the user as the generic `form.errorBody` (so we never reveal internal config to the outside), and is logged server-side so ops can fix it.
-- **`replyTo: parsed.email`** on the Resend send means responses from `info@mackays.com.au` go straight back to the enquirer — a small quality-of-life win for the inbox team that's usually missed on contact forms.
-- **ChevronDown rotation** uses Radix's `data-state` attribute via Tailwind's `group-data-[state=open]:rotate-180` — no JS toggling, no extra state, no ref plumbing.
-- **`WhyMackaysPillars` `border-t` accents** are driven by each pillar's `accent` field in content. The Phase 2 `WORK_WITH_US.pillars` was already populated with `crimson`, `harvest-gold`, `sage-field`, `crimson` in that order, matching the brief's expected alternation.
-- **`Zod v4 .flatten()`** — used directly on the `ZodError` instance in the API route. Zod v4 exports a top-level `z.flattenError()` as well, but the method form still works and kept the diff small.
-- **Static QldFarmMap on contact page** — passes `interactionDisabled` to prevent pan/zoom (Phase 2 already supported this), and `!h-[280px]` className override to shrink the map container below its default `h-[340px] md:h-[520px]`. Tailwind's `!` important prefix wins over the component's default classes.
+- **No SplitText** — GSAP Club licence not confirmed in `~/.npmrc`, so the brief's fallback path (add `rotationX: -15` to the existing word-split tween) was taken. If Tim confirms the club licence later, KineticHero is the single file to upgrade.
+- **`useGSAP` dependency + cleanup** — `useGSAP` tracks every tween, timeline and ScrollTrigger created inside its callback and cleans them up when the deps change. Passing `[prefersReducedMotion]` (and, in StickyTimeline, also `[visibleItems.length]`) means toggling the OS preference correctly destroys the old reveal setup and either re-applies the animated version or the reduced version. Verified visually in the build step; no leftover ScrollTriggers after a toggle in practice.
+- **`SplitScreenParallax` mobile disable** was already in place in Phase 2 — the refactor kept that behaviour and just sources the breakpoint constant from `@/lib/motion` instead of inlining `768`.
+- **`Navigation` scroll listener + reduced-motion interaction** — when reduced-motion is on, we force `scrolled = true` (opaque) so the background of the nav is always readable rather than trying to animate between transparent and opaque states. This was the Phase 1 behaviour; the refactor just sources the boolean from the hook.
+- **Hover scale on Button** is a `transform: scale(1.01)` on hover. That's tiny by design — enough to register on cursor hover, not enough to cause layout shift or vestibular issues. The 150 ms `transition-all` makes it feel tactile without being bouncy.
+- **Nav underline uses `scale-x-0` → `scale-x-100` from the left origin** — classic slide-in underline pattern. Active links stay at `scale-x-100`. This is the one effect where the global reduced-motion `transition-duration: 0.01ms` CSS rule makes it snap rather than slide, which is correct: the user still sees the visual state (underline visible/invisible), just not the animation.
+- **`shimmer` keyframe from Phase 6** was left untouched — its one consumer (Carbon tab progress bar in `EnvironmentTabs`) already uses `motion-reduce:animate-none` and doesn't need hook-driven gating.
 
 ## What is NOT done
-- **Animation polish pass (Phase 8)**: `useReducedMotion` hook, `PageTransition` wrapper, microinteraction audit, mobile animation reductions, optional GSAP SplitText on `KineticHero`. Most components already guard on `prefers-reduced-motion` individually; Phase 8 is about factoring a shared hook, page-level transitions, and a consistency pass.
-- **Performance / SEO / accessibility audit + deploy (Phase 9)**.
-- **Contentlayer2 wiring** — intentionally deferred. See note above.
+- **Phase 9** — performance / SEO / accessibility audit + deploy.
+- **`MarqueeBand` inline strings** — still flagged from the Phase 7 evaluator (WARN 5, pre-Phase-7 scope). Not in Phase 8 scope either (polish only, no content). Next pass-of-opportunity: Phase 9 content audit.
 
 ## Exact next step
-Begin **Phase 8 — Animation Polish**. Reference the Phase 8 prompt in `docs/mackays-parchment-build.md` if helpful, but in summary:
+Begin **Phase 9 — Performance, SEO, Accessibility, Deploy**. Reference the Phase 9 prompt in `docs/mackays-parchment-build.md`. In summary:
 
-1. **`src/hooks/useReducedMotion.ts`** — `'use client'` hook that reads `window.matchMedia('(prefers-reduced-motion: reduce)').matches`, subscribes to `change` events, and returns a boolean. Replace the ad-hoc `window.matchMedia(...).matches` calls inside `KineticHero`, `SmoothScrollProvider`, `BrandStatement`, `SplitHero`, `SplitScreenParallax`, `LivingPhotoGrid`, `StickyTimeline`, `BentoProduceGrid`, `SupplyChainExplainer`, `Navigation` with this single hook. Consistency win and easier to extend.
-2. **`src/components/layout/PageTransition.tsx`** — `'use client'` Framer Motion wrapper around `AnimatePresence mode="wait"`, keyed on `usePathname()`. Add it to `app/layout.tsx` around `<main>` only (NOT nav/footer). Transition `{ opacity: 0, y: 12 } → { opacity: 1, y: 0 } → { opacity: 0, y: -12 }`, `duration: 0.25`, cubic-bezier `[0.0, 0.0, 0.2, 1.0]`.
-3. **Microinteraction audit**: `Button` hover/active transitions (scale 1.01 on hover, scale 0.98 on active, crimson-pale glow on primary/gold — partially in place already, finish the pass). `ProduceCard` hover: `scale-[1.05]` on image + `-translate-y-1` on title (already in BentoProduceGrid and HorizontalProduceTape). Nav link `::after` underline: bottom-left scaleX 0→1 on hover.
-4. **`StickyTimeline`** — verify `ScrollTrigger.scrub: 1` (exactly 1, not `true` or a larger number), `markers: false`. Year counter should update smoothly as scroll progresses.
-5. **Mobile animation reductions**: wrap stagger/y/duration values in all GSAP animations to multiply by the `isMobile` factor (0.5/0.6/0.8) when `window.innerWidth < 768`. Simplest implementation: add a `src/lib/motion.ts` helper `scaleMotion(value, isMobile, factor)`.
-6. **GSAP SplitText** — ONLY if the GSAP Club licence has been confirmed in `~/.npmrc`. If not, keep the current word-split and add `rotationX: -15` to the existing `gsap.from` tween on `KineticHero` words for depth. Default: skip SplitText.
+1. **Performance**:
+   - `next/image` compliance audit (already 100% via `ImagePlaceholder` wrapping `next/image`, but verify with a grep for raw `<img` tags).
+   - Check the `sizes` prop on every `ImagePlaceholder fill` usage — some may be over-fetching.
+   - Font loading — Poppins + Lora + JetBrains Mono are already via `next/font/google` with `display: swap`. Verify nothing else loads web fonts at runtime.
+   - Lighthouse performance pass (aim ≥ 90 on mobile).
 
-Zero new pages, zero new content in Phase 8. Purely a polish pass.
+2. **SEO**:
+   - Every page has `export const metadata` — confirm via grep. Verify `title` + `description` lengths.
+   - `app/sitemap.ts` — generate a sitemap from the static route list plus the 6 crop slugs and 3 media slugs.
+   - `app/robots.ts` — permissive `Allow: /` + sitemap link.
+   - Social preview `metadataBase` is set in `app/layout.tsx` — verify Open Graph image resolution (may need `app/opengraph-image.tsx`).
+
+3. **Accessibility**:
+   - Full keyboard navigation pass across nav, produce tape, accordion, tabs, form.
+   - Colour contrast audit — `text-dust` on `bg-parchment` is the risky one; run an actual contrast check.
+   - Screen reader run-through of the contact form + media article.
+   - Lighthouse a11y ≥ 95.
+
+4. **Deploy**:
+   - Create `.env.example` documenting `NEXT_PUBLIC_MAPBOX_TOKEN`, `RESEND_API_KEY`, `NEXT_PUBLIC_SITE_URL`.
+   - Wire Vercel project (or equivalent) via the Vercel MCP tool if in scope.
+   - First deploy to preview, run Lighthouse, fix anything below target.
+
+5. **Content clean-up**:
+   - Fix `MarqueeBand` inline strings — move to `SITE.marquee` or similar.
+   - Client pass over the draft copy written in Phase 2.
 
 ## Files added this phase
-- `app/work-with-us/page.tsx`
-- `app/media/page.tsx`
-- `app/media/[slug]/page.tsx`
-- `app/contact/page.tsx`
-- `app/api/contact/route.ts`
-- `content/media/2022-iqf-expansion.mdx`
-- `content/media/2024-tr4-free.mdx`
-- `content/media/2025-fourth-generation.mdx`
-- `src/components/work-with-us/WhyMackaysPillars.tsx`
-- `src/components/work-with-us/RoleCategories.tsx`
-- `src/components/work-with-us/OpportunitiesAccordion.tsx`
-- `src/components/work-with-us/index.ts`
-- `src/components/contact/ContactForm.tsx`
-- `src/components/contact/index.ts`
-- `src/lib/contact-schema.ts`
-- `src/lib/format-date.ts`
+- `src/hooks/useReducedMotion.ts`
+- `src/lib/motion.ts`
+- `src/components/layout/PageTransition.tsx`
 
 ## Files modified this phase
-- `SPRINT.md` (rewritten for Phase 7)
+- `SPRINT.md` (rewritten for Phase 8)
 - `HANDOFF.md` (this file)
-- `src/content/types.ts` (new `WorkWithUsSectionLabels`, rewritten `ContactContent` + new `ContactFormContent` and friends)
-- `src/content/work-with-us.ts` (added `sectionLabels`, `roleCtaLabel`, `opportunityApplyLabel`)
-- `src/content/contact.ts` (rewrote with sidebar heading, badges heading, full `form` schema copy)
+- `app/layout.tsx` (wraps `children` in `PageTransition`)
+- `src/providers/SmoothScrollProvider.tsx`
+- `src/components/layout/Navigation.tsx`
+- `src/components/ui/Button.tsx`
+- `src/components/ui/StatCounter.tsx`
+- `src/components/sections/KineticHero.tsx`
+- `src/components/sections/SplitScreenParallax.tsx`
+- `src/components/sections/LivingPhotoGrid.tsx`
+- `src/components/sections/BentoProduceGrid.tsx`
+- `src/components/sections/SupplyChainExplainer.tsx`
+- `src/components/sections/StickyTimeline.tsx`
+- `src/components/sections/HorizontalProduceTape.tsx`
+- `src/components/home/BrandStatement.tsx`
+- `src/components/our-story/SplitHero.tsx`

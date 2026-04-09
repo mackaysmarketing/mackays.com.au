@@ -7,6 +7,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Badge } from '@/components/ui/Badge'
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getMotionFactors } from '@/lib/motion'
 import type { BentoGridItem, CropData, CropSlug } from '@/content/types'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -23,23 +25,22 @@ export function BentoProduceGrid({
   className,
 }: BentoProduceGridProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
       if (prefersReducedMotion) {
         gsap.set('[data-bento-card]', { opacity: 1, y: 0 })
         return
       }
 
+      const { stagger, y, duration } = getMotionFactors()
+
       gsap.from('[data-bento-card]', {
         opacity: 0,
-        y: 30,
-        stagger: 0.1,
-        duration: 0.8,
+        y: 30 * y,
+        stagger: 0.1 * stagger,
+        duration: 0.8 * duration,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: containerRef.current,
@@ -48,7 +49,7 @@ export function BentoProduceGrid({
         },
       })
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   )
 
   return (
@@ -79,7 +80,7 @@ export function BentoProduceGrid({
               seed={item.seed}
               alt={`${crop.name} — ${crop.tagline}`}
               sizes="(min-width: 768px) 40vw, 90vw"
-              className="transition-transform duration-500 group-hover:scale-105"
+              className="transition-transform duration-500 group-hover:scale-[1.05]"
             />
             <div
               aria-hidden
@@ -87,7 +88,7 @@ export function BentoProduceGrid({
             />
             <div className="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col gap-3">
               <Badge variant={item.badgeVariant} label={item.stat} />
-              <span className="font-heading font-bold text-[24px] md:text-[28px] text-white leading-tight transition-transform duration-200 group-hover:-translate-y-1">
+              <span className="font-heading font-bold text-[24px] md:text-[28px] text-white leading-tight transition-transform duration-200 group-hover:-translate-y-[3px]">
                 {crop.name}
               </span>
               <span className="font-body italic text-[14px] text-white/75 max-w-xs">

@@ -5,6 +5,7 @@ import Lenis from '@studio-freight/lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MotionConfig } from 'framer-motion'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -18,12 +19,9 @@ export function SmoothScrollProvider({
   children: React.ReactNode
 }) {
   const lenisRef = useRef<Lenis | null>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-
     if (prefersReducedMotion) {
       return
     }
@@ -67,7 +65,7 @@ export function SmoothScrollProvider({
       lenis.destroy()
       lenisRef.current = null
     }
-  }, [])
+  }, [prefersReducedMotion])
 
   return (
     <MotionConfig reducedMotion="user">

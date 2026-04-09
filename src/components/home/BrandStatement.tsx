@@ -7,6 +7,8 @@ import { useGSAP } from '@gsap/react'
 import { Button } from '@/components/ui/Button'
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getMotionFactors } from '@/lib/motion'
 import type { HomeBrandStatement } from '@/content/types'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -23,22 +25,21 @@ export function BrandStatement({
   imageAlt,
 }: BrandStatementProps) {
   const containerRef = useRef<HTMLElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
       if (prefersReducedMotion) {
         gsap.set('[data-brand-image]', { x: 0, opacity: 1 })
         return
       }
 
+      const { y: yFactor, duration } = getMotionFactors()
+
       gsap.from('[data-brand-image]', {
-        x: 60,
+        x: 60 * yFactor,
         opacity: 0,
-        duration: 1,
+        duration: 1 * duration,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: containerRef.current,
@@ -47,7 +48,7 @@ export function BrandStatement({
         },
       })
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   )
 
   return (

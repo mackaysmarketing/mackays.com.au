@@ -3,6 +3,7 @@ import { Poppins, Lora, JetBrains_Mono } from 'next/font/google'
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider'
 import { Navigation } from '@/components/layout/Navigation'
 import { Footer } from '@/components/layout/Footer'
+import { PageTransition } from '@/components/layout/PageTransition'
 import './globals.css'
 
 const poppins = Poppins({
@@ -47,7 +48,9 @@ export default function RootLayout({
       <body>
         <SmoothScrollProvider>
           <Navigation />
-          <main>{children}</main>
+          <main>
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
         </SmoothScrollProvider>
       </body>

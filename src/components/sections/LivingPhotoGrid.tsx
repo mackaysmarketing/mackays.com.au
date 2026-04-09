@@ -5,6 +5,8 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getMotionFactors } from '@/lib/motion'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
@@ -22,25 +24,24 @@ export function LivingPhotoGrid({
   className,
 }: LivingPhotoGridProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
       if (prefersReducedMotion) {
         gsap.set('[data-living-photo]', { clipPath: 'inset(0% 0 0 0)' })
         return
       }
+
+      const { stagger, duration } = getMotionFactors()
 
       gsap.fromTo(
         '[data-living-photo]',
         { clipPath: 'inset(100% 0 0 0)' },
         {
           clipPath: 'inset(0% 0 0 0)',
-          stagger: 0.1,
-          duration: 0.9,
+          stagger: 0.1 * stagger,
+          duration: 0.9 * duration,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: containerRef.current,
@@ -50,7 +51,7 @@ export function LivingPhotoGrid({
         },
       )
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   )
 
   return (

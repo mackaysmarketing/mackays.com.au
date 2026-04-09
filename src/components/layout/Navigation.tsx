@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { primaryNav, ctaLink, siteMeta } from '@/content/navigation'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 const SCROLL_THRESHOLD = 80
 
@@ -13,12 +14,9 @@ export function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-
     if (prefersReducedMotion) {
       setScrolled(true)
       return
@@ -30,7 +28,7 @@ export function Navigation() {
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [prefersReducedMotion])
 
   useEffect(() => {
     setMobileOpen(false)
@@ -86,10 +84,10 @@ export function Navigation() {
                   >
                     <Link
                       href={link.href}
-                      className={`font-heading text-[12px] font-medium tracking-wide uppercase transition-colors inline-flex items-center gap-1 pb-1 border-b ${
+                      className={`relative font-heading text-[12px] font-medium tracking-wide uppercase transition-colors inline-flex items-center gap-1 pb-1 after:absolute after:left-0 after:bottom-0 after:h-px after:w-full after:bg-crimson after:origin-left after:transition-transform after:duration-200 ${
                         active
-                          ? 'text-ink border-crimson'
-                          : 'text-dust hover:text-ink border-transparent'
+                          ? 'text-ink after:scale-x-100'
+                          : 'text-dust hover:text-ink after:scale-x-0 hover:after:scale-x-100'
                       }`}
                     >
                       {link.label}
@@ -122,10 +120,10 @@ export function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`font-heading text-[12px] font-medium tracking-wide uppercase transition-colors pb-1 border-b ${
+                  className={`relative font-heading text-[12px] font-medium tracking-wide uppercase transition-colors pb-1 after:absolute after:left-0 after:bottom-0 after:h-px after:w-full after:bg-crimson after:origin-left after:transition-transform after:duration-200 ${
                     active
-                      ? 'text-ink border-crimson'
-                      : 'text-dust hover:text-ink border-transparent'
+                      ? 'text-ink after:scale-x-100'
+                      : 'text-dust hover:text-ink after:scale-x-0 hover:after:scale-x-100'
                   }`}
                 >
                   {link.label}

@@ -6,6 +6,8 @@ import type { ComponentType, SVGProps } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { getMotionFactors } from '@/lib/motion'
 import type { SupplyChainIcon, SupplyChainStep } from '@/content/types'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -27,24 +29,23 @@ export function SupplyChainExplainer({
   className,
 }: SupplyChainExplainerProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches
-
       if (prefersReducedMotion) {
         gsap.set('[data-sc-connector]', { scaleX: 1 })
         gsap.set('[data-sc-step]', { opacity: 1, y: 0 })
         return
       }
 
+      const { stagger, y, duration } = getMotionFactors()
+
       gsap.from('[data-sc-step]', {
         opacity: 0,
-        y: 20,
-        stagger: 0.15,
-        duration: 0.6,
+        y: 20 * y,
+        stagger: 0.15 * stagger,
+        duration: 0.6 * duration,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: containerRef.current,
@@ -56,8 +57,8 @@ export function SupplyChainExplainer({
       gsap.from('[data-sc-connector]', {
         scaleX: 0,
         transformOrigin: 'left center',
-        stagger: 0.2,
-        duration: 0.7,
+        stagger: 0.2 * stagger,
+        duration: 0.7 * duration,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: containerRef.current,
@@ -66,7 +67,7 @@ export function SupplyChainExplainer({
         },
       })
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   )
 
   return (
