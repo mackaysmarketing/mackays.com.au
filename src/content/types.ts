@@ -115,6 +115,40 @@ export interface HomeContent {
   lifePhotoGrid: HomePhotoGridItem[]
 }
 
+export interface OurStorySectionLabels {
+  founding: {
+    eyebrow: string
+    headline: string
+  }
+  familyTree: {
+    eyebrow: string
+    headline: string
+  }
+  futureVision: {
+    eyebrow: string
+    headline: string
+  }
+}
+
+export interface OurStoryFamilyTree {
+  gen1: {
+    left: string
+    right: string
+  }
+  gen2: string[]
+  gen3Title: string
+  gen4Caption: string
+}
+
+export type ValueAccent = 'crimson' | 'harvest-gold' | 'sage-field'
+
+export interface OurStoryValue {
+  number: string
+  heading: string
+  body: string
+  accent: ValueAccent
+}
+
 export interface OurStoryContent {
   hero: {
     eyebrow: string
@@ -122,6 +156,7 @@ export interface OurStoryContent {
     subheadline: string
   }
   founding: string
+  foundingBlockquote: string
   cyclone: string
   secondGen: string
   thirdGen: string
@@ -130,6 +165,12 @@ export interface OurStoryContent {
   pullQuote: {
     quote: string
     attribution: string
+  }
+  sectionLabels: OurStorySectionLabels
+  familyTree: OurStoryFamilyTree
+  values: OurStoryValue[]
+  ctas: {
+    futureVision: CtaLink
   }
 }
 
