@@ -37,6 +37,20 @@ const config: Config = {
         lg: 'var(--radius-lg)',
         xl: 'var(--radius-xl)',
       },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'scroll-indicator': {
+          '0%, 100%': { transform: 'scaleY(0.2)', transformOrigin: 'top' },
+          '50%': { transform: 'scaleY(1)', transformOrigin: 'top' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 30s linear infinite',
+        'scroll-indicator': 'scroll-indicator 2s ease-in-out infinite',
+      },
     },
   },
   plugins: [],

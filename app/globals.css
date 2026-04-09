@@ -66,6 +66,15 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
   border-radius: var(--radius-xs);
 }
 
+/* ─── SCROLLBAR HIDE UTILITY ─────────────────────────────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─── REDUCED MOTION SAFEGUARD ───────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
