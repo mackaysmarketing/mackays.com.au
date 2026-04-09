@@ -51,7 +51,7 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
 }
 
 const BASE_CLASSES =
-  'inline-flex items-center justify-center gap-2 font-heading font-semibold rounded-[var(--radius-md)] transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none'
+  'inline-flex items-center justify-center gap-2 font-heading font-semibold rounded-[var(--radius-md)] transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:scale-100 disabled:active:scale-100'
 
 function composeClassName(
   variant: ButtonVariant,

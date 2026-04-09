@@ -140,7 +140,10 @@ export function KineticHero({
           </p>
         )}
 
-        <h1 className="font-heading font-bold text-[clamp(40px,7vw,96px)] leading-[1.02] tracking-[-0.03em] text-white max-w-5xl mb-6">
+        <h1
+          className="font-heading font-bold text-[clamp(40px,7vw,96px)] leading-[1.02] tracking-[-0.03em] text-white max-w-5xl mb-6"
+          style={{ perspective: '800px' }}
+        >
           {lines.map((line, lineIndex) => {
             const words = line.text.split(/\s+/)
             const accentClass = line.accent

@@ -70,8 +70,7 @@ export function StickyTimeline({
               visibleItems.length - 1,
               Math.max(0, Math.floor(progress * visibleItems.length)),
             )
-            const nextYear = visibleItems[index]?.year ?? ''
-            setActiveYear((prev) => (prev === nextYear ? prev : nextYear))
+            setActiveYear(visibleItems[index]?.year ?? '')
           },
         })
       }

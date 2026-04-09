@@ -76,11 +76,7 @@ export function Footer() {
 
       <div
         aria-hidden
-        className="h-[3px] w-full"
-        style={{
-          background:
-            'linear-gradient(90deg, #d43646 0%, #f8d940 50%, #788C5D 100%)',
-        }}
+        className="h-[3px] w-full bg-[linear-gradient(90deg,var(--crimson)_0%,var(--harvest-gold)_50%,var(--sage-field)_100%)]"
       />
     </footer>
   )
