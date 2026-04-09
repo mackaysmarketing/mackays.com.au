@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 }
 
 export default function MediaPage() {
-  const { hero, pressReleases, mediaContact } = MEDIA
+  const { hero, pressReleases, mediaContact, labels } = MEDIA
 
   return (
     <>
@@ -51,9 +51,13 @@ export default function MediaPage() {
               </p>
               <Link
                 href={`/media/${pr.slug}`}
+                aria-label={labels.readMoreAriaTemplate.replace(
+                  '{headline}',
+                  pr.headline,
+                )}
                 className="font-heading text-[12px] font-semibold text-crimson border-b border-crimson inline-block self-start hover:text-crimson-dark hover:border-crimson-dark transition-colors"
               >
-                Read more →
+                {labels.readMore} →
               </Link>
             </article>
           ))}

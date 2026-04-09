@@ -37,6 +37,7 @@ export function ContactForm() {
   })
 
   const onSubmit: SubmitHandler<ContactFormValues> = async (values) => {
+    if (status === 'submitting') return
     setStatus('submitting')
     try {
       const response = await fetch('/api/contact', {
@@ -212,16 +213,21 @@ export function ContactForm() {
             )}
 
             <div className="mt-8">
-              <Button
-                variant="primary"
-                size="lg"
-                type="submit"
-                className="w-full md:w-auto"
-              >
-                {isSubmitting || status === 'submitting'
-                  ? form.submittingLabel
-                  : form.submitLabel}
-              </Button>
+              {(() => {
+                const busy = isSubmitting || status === 'submitting'
+                return (
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    type="submit"
+                    disabled={busy}
+                    aria-busy={busy}
+                    className="w-full md:w-auto"
+                  >
+                    {busy ? form.submittingLabel : form.submitLabel}
+                  </Button>
+                )
+              })()}
             </div>
           </motion.form>
         )}

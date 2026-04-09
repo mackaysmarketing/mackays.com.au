@@ -27,6 +27,8 @@ type NativeButtonProps = CommonProps & {
   href?: never
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>['onClick']
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
+  disabled?: boolean
+  'aria-busy'?: boolean
 }
 
 export type ButtonProps = LinkProps | NativeButtonProps
@@ -49,7 +51,7 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
 }
 
 const BASE_CLASSES =
-  'inline-flex items-center justify-center gap-2 font-heading font-semibold rounded-[var(--radius-md)] transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson focus-visible:ring-offset-2 focus-visible:ring-offset-parchment'
+  'inline-flex items-center justify-center gap-2 font-heading font-semibold rounded-[var(--radius-md)] transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none'
 
 function composeClassName(
   variant: ButtonVariant,
@@ -95,9 +97,20 @@ export function Button(props: ButtonProps) {
     )
   }
 
-  const { onClick, type = 'button' } = props as NativeButtonProps
+  const {
+    onClick,
+    type = 'button',
+    disabled,
+    'aria-busy': ariaBusy,
+  } = props as NativeButtonProps
   return (
-    <button type={type} onClick={onClick} className={composed}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      aria-busy={ariaBusy}
+      className={composed}
+    >
       {children}
     </button>
   )

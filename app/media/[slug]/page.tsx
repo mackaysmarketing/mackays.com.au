@@ -52,13 +52,15 @@ export default async function PressReleasePage({
   const pr = MEDIA.pressReleases.find((item) => item.slug === slug)
   if (!pr) notFound()
 
+  const labels = MEDIA.labels
+
   return (
     <article className="max-w-2xl mx-auto px-10 pt-32 pb-24">
       <Link
         href="/media"
         className="font-heading text-[11px] font-semibold uppercase tracking-[0.14em] text-dust hover:text-crimson transition-colors"
       >
-        ← All news
+        ← {labels.backToList}
       </Link>
 
       <header className="mt-8 mb-10 border-b border-parchment-deep pb-8">
@@ -80,10 +82,10 @@ export default async function PressReleasePage({
 
       <footer className="mt-16 pt-8 border-t border-parchment-deep flex flex-col sm:flex-row gap-4 justify-between items-start">
         <Button variant="ghost-link" href="/media">
-          ← All news
+          ← {labels.backToList}
         </Button>
         <Button variant="secondary" size="md" href="/contact">
-          Media contact →
+          {labels.mediaContactCta} →
         </Button>
       </footer>
     </article>

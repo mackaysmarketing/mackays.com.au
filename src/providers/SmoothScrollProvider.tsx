@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef } from 'react'
 import Lenis from '@studio-freight/lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { MotionConfig } from 'framer-motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -69,8 +70,10 @@ export function SmoothScrollProvider({
   }, [])
 
   return (
-    <LenisContext.Provider value={lenisRef.current}>
-      {children}
-    </LenisContext.Provider>
+    <MotionConfig reducedMotion="user">
+      <LenisContext.Provider value={lenisRef.current}>
+        {children}
+      </LenisContext.Provider>
+    </MotionConfig>
   )
 }

@@ -463,6 +463,7 @@ export interface WorkWithUsContent {
     headline: string
     subheadline: string
     ctaPrimary: CtaLink
+    imageAlt: string
   }
   sectionLabels: WorkWithUsSectionLabels
   pillars: WorkPillar[]
@@ -486,6 +487,13 @@ export interface PressRelease {
   body: string
 }
 
+export interface MediaLabels {
+  readMore: string
+  readMoreAriaTemplate: string
+  backToList: string
+  mediaContactCta: string
+}
+
 export interface MediaContent {
   hero: {
     eyebrow: string
@@ -498,6 +506,7 @@ export interface MediaContent {
     email: string
     phone: string
   }
+  labels: MediaLabels
 }
 
 export interface ContactOffice {
@@ -544,6 +553,21 @@ export interface ContactFormValidation {
   messageMin: string
 }
 
+export interface ContactEmailTemplate {
+  fromName: string
+  subjectPrefix: string
+  bodyTitle: string
+  bodyDivider: string
+  bodyLineLabels: {
+    name: string
+    company: string
+    email: string
+    phone: string
+    enquiryType: string
+  }
+  bodyMessageHeading: string
+}
+
 export interface ContactFormContent {
   heading: string
   labels: ContactFormLabels
@@ -555,6 +579,7 @@ export interface ContactFormContent {
   successBody: string
   errorBody: string
   validation: ContactFormValidation
+  emailTemplate: ContactEmailTemplate
 }
 
 export interface ContactContent {

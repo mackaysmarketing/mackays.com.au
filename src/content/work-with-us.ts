@@ -10,6 +10,7 @@ export const WORK_WITH_US: WorkWithUsContent = {
     subheadline:
       "We hire locally, we train continuously, and we offer real careers in a business that isn't going anywhere. Farm, packing shed, IQF facility, workshop, office — there is more than one way into Mackays.",
     ctaPrimary: { label: 'See current roles', href: DAYFORCE_URL },
+    imageAlt: 'Mackays team on-farm in Tully, Far North Queensland',
   },
   sectionLabels: {
     whyMackays: {

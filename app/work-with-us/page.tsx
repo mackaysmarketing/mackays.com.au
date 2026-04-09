@@ -38,7 +38,7 @@ export default function WorkWithUsPage() {
         subheadline={hero.subheadline}
         ctaPrimary={hero.ctaPrimary}
         imageSeed={30}
-        imageAlt="Mackays team at work in Tully"
+        imageAlt={hero.imageAlt}
       />
 
       {/* 2. Why Mackays */}

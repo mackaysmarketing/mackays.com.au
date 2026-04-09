@@ -67,5 +67,19 @@ export const CONTACT: ContactContent = {
       enquiryRequired: 'Please choose an enquiry type.',
       messageMin: 'Please write a message of at least 20 characters.',
     },
+    emailTemplate: {
+      fromName: 'Mackays Website',
+      subjectPrefix: 'Website enquiry',
+      bodyTitle: 'New website enquiry',
+      bodyDivider: '--------------------',
+      bodyLineLabels: {
+        name: 'Name',
+        company: 'Company',
+        email: 'Email',
+        phone: 'Phone',
+        enquiryType: 'Enquiry type',
+      },
+      bodyMessageHeading: 'Message',
+    },
   },
 }
