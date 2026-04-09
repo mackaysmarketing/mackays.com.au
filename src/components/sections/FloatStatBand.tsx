@@ -34,6 +34,7 @@ export function FloatStatBand({ stats, className }: FloatStatBandProps) {
                 prefix={stat.prefix}
                 suffix={stat.suffix}
                 label={stat.label}
+                separator={stat.separator}
               />
             </div>
           )

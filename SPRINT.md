@@ -1,17 +1,21 @@
-# Sprint: Phase 2 — Content Layer + Component Library
+# Sprint: Phase 3 — Home Page
 Date: 2026-04-10
 
 ## Scope
-All site copy as typed TypeScript constants in src/content/. All UI primitives.
-All 10 named section components. No full pages yet.
+Build app/page.tsx — the home page — by composing the 10 Phase 2 section
+components with copy imported from src/content. Zero inline strings.
+No new pages or components except the two small home-only wrappers for
+(a) the brand statement GSAP reveal and (b) the sustainability band layout.
 
 ## Acceptance Criteria
-- [ ] src/content/index.ts exports HOME, OUR_STORY, PRODUCE, PEOPLE_ENVIRONMENT, WORK_WITH_US, MEDIA, CONTACT, SITE, FARM_MARKERS
-- [ ] src/content/produce.ts exports CROP_SLUGS and per-crop data
-- [ ] src/content/timeline.ts exports all 25 TIMELINE_ITEMS
-- [ ] All UI primitives exist: Button, SectionHeader, StatCounter, ImagePlaceholder, Badge
-- [ ] All section components exist and compile: KineticHero, FloatStatBand, HorizontalProduceTape, StickyTimeline, SplitScreenParallax, LivingPhotoGrid, MarqueeBand, PullQuoteSection, QldFarmMap, GoldCalloutBand
+- [ ] app/page.tsx imports every copy string from @/content (no inline text)
+- [ ] Section order: KineticHero → FloatStatBand → BrandStatement → HorizontalProduceTape → StickyTimeline (abbreviated) → QldFarmMap → PullQuoteSection → SustainabilityBand → LivingPhotoGrid → MarqueeBand
+- [ ] Brand statement: two-column, GSAP scroll reveal on image (x 60→0, opacity 0→1, once:true)
+- [ ] Sustainability band: bg-ink full-width, SectionHeader tone="parchment", four pillars with Shield/Recycle/Leaf/Heart icons
+- [ ] FloatStatBand renders 1945 (no comma), 5,800+, 550+, 13%
+- [ ] Metadata: correct title + description per brief
 - [ ] pnpm tsc --noEmit passes
+- [ ] pnpm build passes
 
 ## Definition of Done
-All files committed. HANDOFF.md updated. Ready for evaluator review.
+Committed on main. HANDOFF.md updated for Phase 4 handoff.

@@ -1,93 +1,96 @@
-# Handoff: Phase 2 — Content Layer + Component Library
+# Handoff: Phase 3 — Home Page
 Date: 2026-04-10
 Session type: Build
 
 ## What was completed
 
-### Content layer (src/content/)
-- `types.ts` — shared TypeScript interfaces for every content shape (SITE, HOME, OUR_STORY, PRODUCE, CROPS, PEOPLE_ENVIRONMENT, WORK_WITH_US, MEDIA, CONTACT, FARM_MARKERS, TIMELINE). No `any`, no `as const`, all plainly typed.
-- `site.ts` — `SITE` meta (brand, legal name, tagline, meta description, address, phone, four emails, copyright, Foodbank line).
-- `home.ts` — `HOME.hero`, four `stats` (1945, 5,800+, 550+, 13%), `brandStatement`, four `sustainability.pillars` (Shield/Recycle/Leaf/Heart), `pullQuote`, `mapSection`.
-- `our-story.ts` — `OUR_STORY.hero`, `founding`, `cyclone`, `secondGen`, `thirdGen`, `fourthGen`, `futureVision`, `pullQuote`.
-- `produce.ts` — `CROP_SLUGS` (typed union), `PRODUCE_DATA` (all 6 crops: bananas, red-papaya, avocados, sugar-cane, cattle, passionfruit — each with name/tagline/heroSeed/storySeed/eyebrow/storyHeadline/story/growing/varieties/pullQuote/stats), and `PRODUCE` (overview, smartBanana, iqf, tradeEnquiryBody).
-- `people-environment.ts` — `PEOPLE_ENVIRONMENT.hero` (with `|` delimiter for the two-line headline), `ourPeople`, 5 `directors` (Gavin, Barrie, Stephen, Cameron, Daniel Mackay with titles from the build brief), `boardNote`, `fourthGenStatement`, 4 `environment` tabs (biosecurity, water, carbon, iqf), `community.foodbankBody`.
-- `work-with-us.ts` — `WORK_WITH_US.hero`, 4 `pillars`, 6 `roles`, 6 `opportunities` (all with Dayforce apply URL), `alwaysRecruiting`.
-- `media.ts` — 3 `pressReleases` (2022 IQF expansion, 2024 TR4-free, 2025 fourth-generation) with slugs, dates, excerpts and bodies. `mediaContact`.
-- `contact.ts` — `CONTACT.headline`, `subheadline`, 3 `offices` (Farming, Marketing, Retail & Trade), 3 `badges` (Foodbank QLD, ABGC, Avocados Australia).
-- `farm-markers.ts` — `FARM_MARKERS` for Tully Valley, Atherton Tablelands and Dimbulah with coords, crops, hectares and notes.
-- `timeline.ts` — `TIMELINE_ITEMS` with all 25 entries from 1945 through 2025, with `imageSeed` assigned by decade per the build brief (1940s→120, 1960–70s→80, 1980–90s→40, 2000s→10, 2010s→60, 2020s→30).
-- `index.ts` — re-exports everything above plus the types module, so components only need `import { … } from '@/content'`.
+### Home page — `app/page.tsx`
+Server component that composes the 10-section home page entirely from the
+Phase 2 component library, reading every string from `@/content`. The page
+is statically prerendered at build time.
 
-### UI primitives (src/components/ui/)
-- `Button.tsx` — all 5 variants (primary, secondary, gold, ink-gold, ghost-link), 3 sizes, discriminated-union props (href vs onClick). Renders `<Link>` for internal hrefs, `<a target=_blank rel=noopener>` for external/mailto/tel, `<button>` otherwise. Focus ring + active scale + primary/gold crimson-pale hover glow.
-- `SectionHeader.tsx` — eyebrow/headline/subheadline/align/tone. Supports `<em>…</em>` markers in the headline (rendered Lora italic crimson). `tone="parchment"` recolours all three lines for use on ink backgrounds.
-- `StatCounter.tsx` — wraps `react-countup` with an IntersectionObserver at 0.5 threshold. Large Poppins number with crimson suffix, uppercase dust label. Reduced-motion mode just writes the final number.
-- `ImagePlaceholder.tsx` — `next/image` wrapper with a picsum.photos seed source. Discriminated union: either `{ width, height }` or `{ fill: true }`. Always requires explicit `alt`. Sizes prop passes through.
-- `Badge.tsx` — four variants (crimson, gold, sage, neutral). Small uppercase Poppins pill.
-- `index.ts` — barrel for primitives.
+Section order:
+1. **KineticHero** — `HOME.hero` eyebrow/headline/subheadline/CTAs, seed 90
+2. **FloatStatBand** — `HOME.stats` (1945, 5,800+, 550+, 13%)
+3. **BrandStatement** — two-column, GSAP scroll reveal on the image
+4. **HorizontalProduceTape** — 6 slides mapped from `HOME.produceTape` × `PRODUCE_DATA`
+5. **StickyTimeline (abbreviated)** — `TIMELINE_ITEMS.slice(0, 6)` + "Full history" ghost-link
+6. **QldFarmMap** — `FARM_MARKERS` with eyebrow/headline/subheadline wrapper
+7. **PullQuoteSection** — `HOME.pullQuote`
+8. **SustainabilityBand** — ink background, four-pillar grid, Lucide icons
+9. **LivingPhotoGrid** — 8-image set with captions from `HOME.lifePhotoGrid`
+10. **MarqueeBand**
 
-### Section components (src/components/sections/)
-- `KineticHero.tsx` — full 100svh, background `ImagePlaceholder fill priority`, ink overlay, GSAP word-by-word reveal via `useGSAP` + `scope`, staggered subheadline + CTAs, scroll indicator bar. `prefers-reduced-motion` sets everything to final state. Supports `headline` with a `|` delimiter to render the second segment as Lora italic harvest-gold (used on People & Environment).
-- `FloatStatBand.tsx` — `border-t border-b`, grid 2/4, `StatCounter` per cell with vertical dividers between cells.
-- `HorizontalProduceTape.tsx` — horizontal scroll-snap carousel, keyboard left/right, dot indicators synced to scroll position via IntersectionObserver-style logic, card hover scale, Badge + name + tagline overlay, deep-link per slide.
-- `StickyTimeline.tsx` — 35/65 split, sticky left panel with huge year that updates as items enter the centre via ScrollTrigger, right column with date label/headline/body/optional image, entry fades on scroll. Supports `abbreviated` prop to show first 6 items.
-- `SplitScreenParallax.tsx` — grid 2-col, image column parallax at yPercent -15 via ScrollTrigger scrub. Parallax disabled under 768 px or with reduced motion. `imageLeft` controls column order.
-- `LivingPhotoGrid.tsx` — CSS columns 2/4, varied heights, clipPath top-down reveal with stagger on ScrollTrigger, group-hover caption slide-up.
-- `MarqueeBand.tsx` — bg-ink, Tailwind `animate-marquee` (keyframes now in `tailwind.config.ts`), duplicated row for seamless loop, pause on hover.
-- `PullQuoteSection.tsx` — centered, 3px harvest-gold HR, Lora italic quote, Poppins uppercase crimson attribution.
-- `QldFarmMap.tsx` — dynamic wrapper (`ssr: false`) with a pulse skeleton loading state.
-- `QldFarmMapInner.tsx` — `react-map-gl/mapbox` Map + Marker, `mapbox://styles/mapbox/light-v11`, fallback panel when `NEXT_PUBLIC_MAPBOX_TOKEN` is unset, custom crimson + harvest-gold ring markers, Framer Motion popup card on click. `interactionDisabled` disables all pan/zoom gestures for the static contact page use-case.
-- `GoldCalloutBand.tsx` — harvest-gold band with crimson left border, eyebrow/headline/body, primary Button CTA.
-- `index.ts` — barrel for sections.
+Metadata:
+- title: `Mackays | Australia's Leading Tropical Produce Grower | Far North Queensland`
+- description: `Fourth-generation family farming from Tully, Far North Queensland. Bananas, papaya, avocados, cane, cattle and passionfruit supplied to Coles, Woolworths and ALDI.`
 
-### Config updates
-- `tailwind.config.ts` — added `animation.marquee` and `animation.scroll-indicator` with matching keyframes. Existing colour and font extends preserved.
-- `app/globals.css` — added `.scrollbar-hide` utility for the HorizontalProduceTape.
+### New home-only components (`src/components/home/`)
+- **BrandStatement.tsx** — client component. Two-column layout (SectionHeader + body + ghost-link CTA on the left, image on the right). GSAP `useGSAP` scoped to the container, ScrollTrigger with `once: true`, `x: 60 → 0`, `opacity: 0 → 1`, `power2.out`. Guards on `prefers-reduced-motion` (sets the image to its final state without animating).
+- **SustainabilityBand.tsx** — server component. Ink background, `SectionHeader tone="parchment"`, four-column grid. Uses a typed `ICON_MAP` to resolve the string icon names in `HOME.sustainability.pillars` to Lucide components (`Shield`, `Recycle`, `Leaf`, `Heart`). `ICON_COLOR_CLASS` and `HEADING_COLOR_CLASS` maps translate the content-defined colour tokens (`crimson` / `harvest-gold` / `sage-light` / `sage-field`) into Tailwind classes, so the content layer stays data-only and the presentation stays in the component.
+- **index.ts** barrel.
+
+### Content layer extensions
+- **`HomeContent`** now includes:
+  - `produceTape: HomeProduceTapeSlide[]` — per-crop `{ slug, seed, stat, href }` so the home page's short-form crop statistics live in content, not inline in the page
+  - `sectionLabels` — eyebrow/headline pairs for the Produce Tape, Story, Life at Mackays sections plus the "Full history" CTA label, so the home page has zero inline strings
+  - `lifePhotoGrid: HomePhotoGridItem[]` — 8 `{ seed, caption }` pairs for the LivingPhotoGrid, replacing what was previously inline
+- **`StatItem.separator?: string`** — optional thousands separator (defaults to `,`). The 1945 year stat now passes `separator: ''` so it renders as `1945`, not `1,945`.
+
+### Primitive + section changes to support the above
+- **`StatCounter.tsx`** — accepts `separator?: string`, default `,`, threaded to `react-countup`. Reduced-motion path also respects the separator (empty string → plain `String(value)`, otherwise `toLocaleString('en-AU')`).
+- **`FloatStatBand.tsx`** — threads `stat.separator` through to `StatCounter`.
 
 ## Quality gates
 - `pnpm tsc --noEmit` — clean (exit 0)
-- `pnpm build` — compiles clean, 3 static routes prerendered, zero TS errors
-- No `any` in any source file
-- No inline copy strings in any component — every bit of text reads from `@/content`
-- All colour values via CSS variables / Tailwind tokens (no hardcoded hex in components)
-- All animated components guard on `prefers-reduced-motion`
+- `pnpm build` — clean; home page (`/`) statically prerendered alongside `/_not-found`
+- No inline text strings anywhere in `app/page.tsx` — every visible bit of copy is read from `@/content`
+- No hardcoded hex in `src/components/home/` — all colours flow through Tailwind tokens
+- `prefers-reduced-motion` honoured in BrandStatement (GSAP) and inherited automatically in every Phase 2 section already guarded in Phase 2
 
 ## Known notes / decisions
-- The build brief referenced `docs/mackays-complete-build.md` for Part 3 copy but that file doesn't exist in the repo — only `docs/mackays-parchment-build.md`, which contains the phase prompts that reference content keys by name. I wrote copy directly, using only facts explicitly stated in the brief (1945 founding, 5,800 ha, 550+ team, 13 % of national bananas, Cyclones Larry/Yasi, Panama TR4-free 3 years, 8,830 ML water + 2,000 ML private agreement, IQF 50+ jobs, Foodbank QLD 50,000 schoolchildren, the five named directors, the Dayforce portal). No invented numerical claims. The copy will likely be reviewed by the client before going live — see "What is NOT done".
-- `react-map-gl@8` resolves to `react-map-gl/mapbox` (default export = Map, named Marker). Verified against the installed `@vis.gl/react-mapbox` types.
-- KineticHero's two-line accent headline uses a `|` delimiter on the string (per the Phase 6 spec). Simpler and typed.
-- Used `useGSAP` + `gsap.registerPlugin(useGSAP)` everywhere — never bare `useEffect` for GSAP, per CLAUDE.md rule.
+- **Section header wrappers** — the Phase 3 prompt puts each `SectionHeader` directly above its adjacent section component. I wrap them together in a local `<section>` with consistent vertical padding (`py-24`) so the rhythm across the page is even; headers inside those wrappers sit in a `max-w-7xl mx-auto px-10` container and the carousel/map/grid that follow extend past that container to take the full page width. This matches the original Parchment system's editorial rhythm.
+- **Produce tape stats kept in `HOME`**, not `PRODUCE_DATA`. Rationale: the short-form stat lines ("13% of national supply", "Ruby Rise & Red Hill", …) are home-page-specific framing, not canonical crop facts. Putting them on `PRODUCE_DATA` would conflate page-level copy with crop-level data, and Phase 5 will want its own longer `CropData.stats` array on the crop pages (already in place from Phase 2).
+- **Section labels kept in `HOME.sectionLabels`**, not fabricated as inline strings — preserves the "zero inline strings" rule even for small eyebrow/headline pairs.
+- **Icon colour tokens** are typed as a string union on `SustainabilityPillar` in `types.ts` and resolved to Tailwind classes at render time in `SustainabilityBand`. Keeps content free of presentation details while still type-safe.
+- **Page is a server component** (`app/page.tsx`). Only the dynamic/interactive bits (`KineticHero`, `BrandStatement`, `HorizontalProduceTape`, `StickyTimeline`, `LivingPhotoGrid`, `MarqueeBand`, `QldFarmMap`) are client components, loaded individually. `SustainabilityBand`, `SectionHeader`, `Button` and `PullQuoteSection` remain server components.
 
 ## What is NOT done
-- **No pages built yet** beyond the Phase 1 placeholder `app/page.tsx`. The home page, our-story, our-produce (+ 6 crop pages), people-and-environment, work-with-us, media and contact pages are all Phase 3+.
-- **Copy is drafted, not client-signed.** The content layer types and the page build can proceed immediately, but Tim should do a pass on the draft copy (especially the section bodies and pull quotes) before launch.
-- No contact API route yet (`app/api/contact/route.ts` is Phase 7).
-- No MDX / Contentlayer wiring for the press releases yet (Phase 7).
-- FamilyTree and ValuesTriptych components — not in the Phase 2 scope; they're created in Phase 4.
+- `/our-story` (Phase 4)
+- `/our-produce` and the six crop pages (Phase 5)
+- `/people-and-environment` (Phase 6)
+- `/work-with-us`, `/media`, `/contact`, the contact API route and MDX press releases (Phase 7)
+- Animation polish pass (Phase 8)
+- Performance / SEO / accessibility audit + deploy (Phase 9)
+- The placeholder homepage with the Phase 1 text is now replaced — nothing to clean up
 
 ## Exact next step
-Begin Phase 3 — `app/page.tsx`. Import every piece of copy from `@/content` and compose the home page from the section components built this phase, in the order specified in the Phase 3 prompt:
+Begin **Phase 4** — `app/our-story/page.tsx`. Import `OUR_STORY` and `TIMELINE_ITEMS` from `@/content`, and compose in this order:
 
-1. `<KineticHero>` with HOME.hero
-2. `<FloatStatBand stats={HOME.stats}>`
-3. Brand statement two-column with `<SectionHeader>` + body + `<Button variant="ghost-link">` + `<ImagePlaceholder seed={20}>` with a scroll-in GSAP reveal
-4. `<HorizontalProduceTape>` with the 6 produce slides (seed map in the Phase 3 prompt)
-5. Abbreviated `<StickyTimeline items={TIMELINE_ITEMS.slice(0, 6)} abbreviated>`
-6. `<QldFarmMap markers={FARM_MARKERS}>`
-7. `<PullQuoteSection>` with HOME.pullQuote
-8. Sustainability band (ink bg) with 4 Lucide-iconed pillars from HOME.sustainability (note: SectionHeader already supports `tone="parchment"`)
-9. `<LivingPhotoGrid>` with the 8-image seed set from the Phase 3 prompt
-10. `<MarqueeBand>`
+1. **Split Hero** (bespoke to this page) — full 100svh, two columns desktop / stacked mobile. Left: `ImagePlaceholder fill seed={110}`. Right: `bg-parchment-warm` centred vertical, with eyebrow + large headline from `OUR_STORY.hero`. GSAP on load: right panel `x: 80 → 0`, `opacity: 0 → 1`, `0.8s ease-out`, guarded on `prefers-reduced-motion`.
+2. `<SplitScreenParallax imageSeed={120} imageAlt="Rainforest edge near farmland" imageLeft>` with `SectionHeader eyebrow="1945" headline="Hand-cleared. Hand-built."` + `OUR_STORY.founding` + harvest-gold blockquote ("When something breaks, the family builds it back stronger.") + `OUR_STORY.cyclone`.
+3. `<StickyTimeline items={TIMELINE_ITEMS} />` — full 25-item timeline.
+4. **FamilyTree** — new component at `src/components/sections/FamilyTree.tsx`. Gen 1 Stanley/Agnes → Gen 2 John/Robert → Gen 3 five directors (crimson names) → Gen 4 single wide "fourth generation active across all divisions" cell. Connectors via Tailwind borders.
+5. `<PullQuoteSection quote={OUR_STORY.pullQuote.quote} attribution={OUR_STORY.pullQuote.attribution} />`
+6. **ValuesTriptych** — new component at `src/components/sections/ValuesTriptych.tsx`. Three panels (`bg-parchment-warm rounded-xl p-10`), `border-t-[3px]` in crimson/harvest-gold/sage-field, oversized BG number (`text-ink/5`), heading, body. Add `OUR_STORY.values: [{number, heading, body, accent}, …]` to `types.ts` + `our-story.ts`.
+7. **Future Vision** section — centred, `SectionHeader align="center"`, `OUR_STORY.futureVision`, `<Button variant="primary" href="/work-with-us">Work with us</Button>`.
 
-Then wire `export const metadata` at the top of `app/page.tsx` with the title/description from the Phase 3 prompt.
+Metadata:
+- title: `Our Story | Mackays — 80 Years of Family Farming in Far North Queensland`
+- description: `From one hand-cleared block in 1945 to 5,800 hectares across three growing regions. The story of Australia's largest banana-growing family.`
+
+Before building: run the evaluator on the current state (Phases 1–3 committed) if the evaluator loop is in use.
 
 ## Files added this phase
-- src/content/types.ts, index.ts
-- src/content/site.ts, home.ts, our-story.ts, produce.ts, people-environment.ts, work-with-us.ts, media.ts, contact.ts, farm-markers.ts, timeline.ts
-- src/components/ui/Button.tsx, SectionHeader.tsx, StatCounter.tsx, ImagePlaceholder.tsx, Badge.tsx, index.ts
-- src/components/sections/KineticHero.tsx, FloatStatBand.tsx, HorizontalProduceTape.tsx, StickyTimeline.tsx, SplitScreenParallax.tsx, LivingPhotoGrid.tsx, MarqueeBand.tsx, PullQuoteSection.tsx, QldFarmMap.tsx, QldFarmMapInner.tsx, GoldCalloutBand.tsx, index.ts
+- `src/components/home/BrandStatement.tsx`
+- `src/components/home/SustainabilityBand.tsx`
+- `src/components/home/index.ts`
 
 ## Files modified this phase
-- SPRINT.md (rewritten for Phase 2)
-- tailwind.config.ts (marquee + scroll-indicator keyframes & animations)
-- app/globals.css (scrollbar-hide utility)
+- `SPRINT.md` (rewritten for Phase 3)
+- `HANDOFF.md` (this file)
+- `app/page.tsx` (replaces the Phase 1 placeholder)
+- `src/content/home.ts` (added `produceTape`, `sectionLabels`, `lifePhotoGrid`; added `separator: ''` on the 1945 stat)
+- `src/content/types.ts` (extended `HomeContent`; added `StatItem.separator`; new interfaces `HomeProduceTapeSlide`, `HomeSectionLabels`, `HomePhotoGridItem`)
+- `src/components/ui/StatCounter.tsx` (accepts `separator` prop)
+- `src/components/sections/FloatStatBand.tsx` (threads `stat.separator`)

@@ -32,6 +32,12 @@ export interface StatItem {
   prefix?: string
   suffix?: string
   label: string
+  /**
+   * Thousands separator passed through to CountUp. Defaults to ","; pass ""
+   * for year-style values (e.g. 1945) that should not be formatted with a
+   * comma.
+   */
+  separator?: string
 }
 
 export interface SustainabilityPillar {
@@ -62,6 +68,34 @@ export interface HomeMapSection {
   body: string
 }
 
+export interface HomeProduceTapeSlide {
+  slug: CropSlug
+  seed: number
+  stat: string
+  href: string
+}
+
+export interface HomeSectionLabels {
+  produce: {
+    eyebrow: string
+    headline: string
+  }
+  story: {
+    eyebrow: string
+    headline: string
+    fullHistoryCta: string
+  }
+  lifeAtMackays: {
+    eyebrow: string
+    headline: string
+  }
+}
+
+export interface HomePhotoGridItem {
+  seed: number
+  caption: string
+}
+
 export interface HomeContent {
   hero: HomeHero
   stats: StatItem[]
@@ -76,6 +110,9 @@ export interface HomeContent {
     attribution: string
   }
   mapSection: HomeMapSection
+  produceTape: HomeProduceTapeSlide[]
+  sectionLabels: HomeSectionLabels
+  lifePhotoGrid: HomePhotoGridItem[]
 }
 
 export interface OurStoryContent {

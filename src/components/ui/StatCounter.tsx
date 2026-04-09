@@ -9,6 +9,7 @@ export interface StatCounterProps {
   suffix?: string
   label: string
   duration?: number
+  separator?: string
   className?: string
 }
 
@@ -18,6 +19,7 @@ export function StatCounter({
   suffix,
   label,
   duration = 2,
+  separator = ',',
   className,
 }: StatCounterProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -56,12 +58,16 @@ export function StatCounter({
         {prefix && <span>{prefix}</span>}
         {inView ? (
           prefersReducedMotion ? (
-            <span>{value.toLocaleString('en-AU')}</span>
+            <span>
+              {separator === ''
+                ? String(value)
+                : value.toLocaleString('en-AU')}
+            </span>
           ) : (
             <CountUp
               end={value}
               duration={duration}
-              separator=","
+              separator={separator}
               preserveValue
             />
           )

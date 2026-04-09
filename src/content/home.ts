@@ -10,7 +10,7 @@ export const HOME: HomeContent = {
     ctaSecondary: { label: 'Our produce', href: '/our-produce' },
   },
   stats: [
-    { value: 1945, label: 'Farming since' },
+    { value: 1945, separator: '', label: 'Farming since' },
     { value: 5800, suffix: '+', label: 'Hectares under management' },
     { value: 550, suffix: '+', label: 'Team members' },
     { value: 13, suffix: '%', label: "Of Australia's bananas" },
@@ -61,4 +61,67 @@ export const HOME: HomeContent = {
     headline: 'Three regions. One reason — resilience.',
     body: "We farm across three distinct tropical and sub-tropical zones in Far North Queensland so that weather, pest and market shocks can't take out the whole operation at once.",
   },
+  produceTape: [
+    {
+      slug: 'bananas',
+      seed: 20,
+      stat: '13% of national supply',
+      href: '/our-produce/bananas',
+    },
+    {
+      slug: 'red-papaya',
+      seed: 50,
+      stat: 'Ruby Rise & Red Hill',
+      href: '/our-produce/red-papaya',
+    },
+    {
+      slug: 'avocados',
+      seed: 60,
+      stat: 'Maluma & Shepherd',
+      href: '/our-produce/avocados',
+    },
+    {
+      slug: 'sugar-cane',
+      seed: 80,
+      stat: '1,000+ hectares',
+      href: '/our-produce/sugar-cane',
+    },
+    {
+      slug: 'cattle',
+      seed: 70,
+      stat: '~800 head, grass-fed',
+      href: '/our-produce/cattle',
+    },
+    {
+      slug: 'passionfruit',
+      seed: 150,
+      stat: 'Far North Queensland',
+      href: '/our-produce/passionfruit',
+    },
+  ],
+  sectionLabels: {
+    produce: {
+      eyebrow: 'Our Produce',
+      headline: 'Six crops. Three regions. One standard.',
+    },
+    story: {
+      eyebrow: 'Our Story',
+      headline: 'Four generations. One unbroken promise.',
+      fullHistoryCta: 'The full history',
+    },
+    lifeAtMackays: {
+      eyebrow: 'Life at Mackays',
+      headline: 'The people behind Australia\'s produce.',
+    },
+  },
+  lifePhotoGrid: [
+    { seed: 10, caption: 'Aerial view' },
+    { seed: 20, caption: 'Banana plantation' },
+    { seed: 30, caption: 'Harvest' },
+    { seed: 40, caption: 'Packing shed' },
+    { seed: 100, caption: 'Our team' },
+    { seed: 110, caption: 'The Mackay family' },
+    { seed: 120, caption: 'Rainforest edge' },
+    { seed: 130, caption: 'IQF facility' },
+  ],
 }
