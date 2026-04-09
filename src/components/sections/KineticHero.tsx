@@ -37,12 +37,27 @@ export function KineticHero({
 }: KineticHeroProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const [primarySegment, accentSegment] = headline.includes('|')
-    ? headline.split('|')
-    : [headline, undefined]
+  /**
+   * Split the headline into an ordered list of lines so that word-by-word
+   * GSAP reveal still works per line.
+   *
+   *  - "\n" is a hard line break, same visual style as the line before it
+   *  - "|" is a line break AND a switch to the Lora italic harvest-gold
+   *    accent treatment (used on People & Environment — "550 people. Three
+   *    regions.|One standard — theirs.")
+   */
+  type HeadlineLine = { text: string; accent: boolean }
 
-  const primaryWords = primarySegment.trim().split(/\s+/)
-  const accentWords = accentSegment?.trim().split(/\s+/) ?? []
+  const lines: HeadlineLine[] = []
+  for (const newlineSegment of headline.split('\n')) {
+    if (newlineSegment.includes('|')) {
+      const [before, after] = newlineSegment.split('|', 2)
+      if (before.trim()) lines.push({ text: before.trim(), accent: false })
+      if (after && after.trim()) lines.push({ text: after.trim(), accent: true })
+    } else if (newlineSegment.trim()) {
+      lines.push({ text: newlineSegment.trim(), accent: false })
+    }
+  }
 
   useGSAP(
     () => {
@@ -123,35 +138,32 @@ export function KineticHero({
         )}
 
         <h1 className="font-heading font-bold text-[clamp(40px,7vw,96px)] leading-[1.02] tracking-[-0.03em] text-white max-w-5xl mb-6">
-          <span className="block">
-            {primaryWords.map((word, index) => (
+          {lines.map((line, lineIndex) => {
+            const words = line.text.split(/\s+/)
+            const accentClass = line.accent
+              ? 'font-body italic font-normal text-harvest-gold'
+              : ''
+            return (
               <span
-                key={`p-${index}`}
-                className="inline-block overflow-hidden mr-[0.25em]"
+                key={`line-${lineIndex}`}
+                className={lineIndex === 0 ? 'block' : 'block mt-2'}
               >
-                <span data-kh-word className="inline-block">
-                  {word}
-                </span>
-              </span>
-            ))}
-          </span>
-          {accentSegment && (
-            <span className="block mt-2">
-              {accentWords.map((word, index) => (
-                <span
-                  key={`a-${index}`}
-                  className="inline-block overflow-hidden mr-[0.25em]"
-                >
+                {words.map((word, wordIndex) => (
                   <span
-                    data-kh-word
-                    className="inline-block font-body italic font-normal text-harvest-gold"
+                    key={`line-${lineIndex}-w-${wordIndex}`}
+                    className="inline-block overflow-hidden mr-[0.25em]"
                   >
-                    {word}
+                    <span
+                      data-kh-word
+                      className={`inline-block ${accentClass}`}
+                    >
+                      {word}
+                    </span>
                   </span>
-                </span>
-              ))}
-            </span>
-          )}
+                ))}
+              </span>
+            )
+          })}
         </h1>
 
         <p

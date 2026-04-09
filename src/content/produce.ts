@@ -197,6 +197,106 @@ export const PRODUCE: ProduceContent = {
     headline: 'Six crops. Three regions. One standard.',
     intro:
       "Every crop we grow was chosen because the ground we farm is the best place in Australia to grow it. Six crops, three distinct growing regions, a single integrated team that's been doing this for 80 years.",
+    hero: {
+      eyebrow: 'Our Produce',
+      headline: 'Six crops.\nThree regions.\nOne standard.',
+      imageAlt: 'A Mackays tropical produce block at harvest',
+      ctaPrimary: {
+        label: 'Explore bananas',
+        href: '/our-produce/bananas',
+      },
+    },
+    bento: {
+      eyebrow: 'What we grow',
+      headline: 'Every crop chosen for where we farm it.',
+      items: [
+        {
+          slug: 'bananas',
+          seed: 20,
+          stat: '13% of national supply',
+          badgeVariant: 'gold',
+          span: 'md:col-span-3 md:row-span-2',
+          minHeight: 'min-h-[320px] md:min-h-[520px]',
+        },
+        {
+          slug: 'red-papaya',
+          seed: 50,
+          stat: 'Ruby Rise & Red Hill',
+          badgeVariant: 'crimson',
+          span: 'md:col-span-2',
+          minHeight: 'min-h-[240px]',
+        },
+        {
+          slug: 'avocados',
+          seed: 60,
+          stat: 'Maluma & Shepherd',
+          badgeVariant: 'sage',
+          span: 'md:col-span-2',
+          minHeight: 'min-h-[240px]',
+        },
+        {
+          slug: 'sugar-cane',
+          seed: 80,
+          stat: '1,000+ hectares',
+          badgeVariant: 'sage',
+          span: 'md:col-span-2',
+          minHeight: 'min-h-[240px]',
+        },
+        {
+          slug: 'cattle',
+          seed: 70,
+          stat: '~800 head, grass-fed',
+          badgeVariant: 'neutral',
+          span: 'md:col-span-2',
+          minHeight: 'min-h-[240px]',
+        },
+        {
+          slug: 'passionfruit',
+          seed: 150,
+          stat: 'Hand-picked',
+          badgeVariant: 'crimson',
+          span: 'md:col-span-1',
+          minHeight: 'min-h-[240px]',
+        },
+      ],
+    },
+    supplyChain: {
+      eyebrow: 'Supply Chain',
+      headline: 'Farm to shelf in 48 hours.',
+      steps: [
+        {
+          stepLabel: 'Step 01',
+          icon: 'MapPin',
+          title: 'Farm',
+          subtitle: 'Far North Queensland',
+        },
+        {
+          stepLabel: 'Step 02',
+          icon: 'Package',
+          title: 'Packed',
+          subtitle: 'Same-day Tully sheds',
+        },
+        {
+          stepLabel: 'Step 03',
+          icon: 'ShoppingCart',
+          title: 'Shelf',
+          subtitle: 'Coles · Woolworths · ALDI',
+        },
+      ],
+    },
+    iqfBand: {
+      eyebrow: 'Zero Waste',
+      headline: 'Nothing goes to waste.',
+      imageAlt: 'Mackays IQF (Individually Quick Frozen) facility in Tully',
+      imageSeed: 130,
+    },
+    tradeBand: {
+      headline: 'Want to stock Mackays produce?',
+      cta: {
+        label: 'Enquire about supply',
+        href: 'mailto:trade@mackays.com.au',
+      },
+    },
   },
   smartBanana: {
     eyebrow: 'Innovation',
@@ -210,6 +310,29 @@ export const PRODUCE: ProduceContent = {
   },
   tradeEnquiryBody:
     "Whether you're a major retailer, a wholesaler, a foodservice operator or an export buyer, our trade team can talk volume, specifications and supply-continuity planning across every crop in our range.",
+  cropPage: {
+    breadcrumb: 'Our Produce',
+    growing: {
+      soil: 'Soil',
+      climate: 'Climate',
+      region: 'Region',
+      harvest: 'Harvest',
+    },
+    varieties: {
+      eyebrow: 'Our Varieties',
+      headlineTemplate: 'Two ways we grow {crop}.',
+    },
+    related: {
+      eyebrow: 'Also from Mackays',
+      headline: 'More from the farm.',
+      moreAriaLabel: 'See more from Mackays',
+    },
+    tradeCallout: {
+      eyebrow: 'Retail & Trade',
+      headline: 'Enquire about supply.',
+      ctaLabel: 'Contact our trade team',
+    },
+  },
   crops: {
     bananas: { tagline: PRODUCE_DATA.bananas.tagline },
     redPapaya: { tagline: PRODUCE_DATA['red-papaya'].tagline },

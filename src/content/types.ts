@@ -174,12 +174,84 @@ export interface OurStoryContent {
   }
 }
 
-export interface ProduceContent {
-  overview: {
+export type SupplyChainIcon = 'MapPin' | 'Package' | 'ShoppingCart'
+
+export interface SupplyChainStep {
+  stepLabel: string
+  icon: SupplyChainIcon
+  title: string
+  subtitle: string
+}
+
+export type BadgeTone = 'crimson' | 'gold' | 'sage' | 'neutral'
+
+export interface BentoGridItem {
+  slug: CropSlug
+  seed: number
+  stat: string
+  badgeVariant: BadgeTone
+  span: string
+  minHeight: string
+}
+
+export interface ProduceOverview {
+  eyebrow: string
+  headline: string
+  intro: string
+  hero: {
     eyebrow: string
     headline: string
-    intro: string
+    imageAlt: string
+    ctaPrimary: CtaLink
   }
+  bento: {
+    eyebrow: string
+    headline: string
+    items: BentoGridItem[]
+  }
+  supplyChain: {
+    eyebrow: string
+    headline: string
+    steps: SupplyChainStep[]
+  }
+  iqfBand: {
+    eyebrow: string
+    headline: string
+    imageAlt: string
+    imageSeed: number
+  }
+  tradeBand: {
+    headline: string
+    cta: CtaLink
+  }
+}
+
+export interface CropPageLabels {
+  breadcrumb: string
+  growing: {
+    soil: string
+    climate: string
+    region: string
+    harvest: string
+  }
+  varieties: {
+    eyebrow: string
+    headlineTemplate: string
+  }
+  related: {
+    eyebrow: string
+    headline: string
+    moreAriaLabel: string
+  }
+  tradeCallout: {
+    eyebrow: string
+    headline: string
+    ctaLabel: string
+  }
+}
+
+export interface ProduceContent {
+  overview: ProduceOverview
   smartBanana: {
     eyebrow: string
     headline: string
@@ -191,6 +263,7 @@ export interface ProduceContent {
     body: string
   }
   tradeEnquiryBody: string
+  cropPage: CropPageLabels
   crops: ProduceCropReferences
 }
 
