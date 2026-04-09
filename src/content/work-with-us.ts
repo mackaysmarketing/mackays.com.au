@@ -11,6 +11,22 @@ export const WORK_WITH_US: WorkWithUsContent = {
       "We hire locally, we train continuously, and we offer real careers in a business that isn't going anywhere. Farm, packing shed, IQF facility, workshop, office — there is more than one way into Mackays.",
     ctaPrimary: { label: 'See current roles', href: DAYFORCE_URL },
   },
+  sectionLabels: {
+    whyMackays: {
+      eyebrow: 'Why Mackays',
+      headline: 'A business worth working for.',
+    },
+    roleCategories: {
+      eyebrow: 'What we hire for',
+      headline: 'Find your place in the operation.',
+    },
+    currentOpportunities: {
+      eyebrow: 'Current Opportunities',
+      headline: "Roles we're recruiting for now.",
+    },
+  },
+  roleCtaLabel: 'See roles',
+  opportunityApplyLabel: 'Apply via Dayforce',
   pillars: [
     {
       number: '01',

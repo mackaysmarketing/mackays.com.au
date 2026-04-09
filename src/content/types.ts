@@ -442,6 +442,21 @@ export interface WorkOpportunity {
   applyHref: string
 }
 
+export interface WorkWithUsSectionLabels {
+  whyMackays: {
+    eyebrow: string
+    headline: string
+  }
+  roleCategories: {
+    eyebrow: string
+    headline: string
+  }
+  currentOpportunities: {
+    eyebrow: string
+    headline: string
+  }
+}
+
 export interface WorkWithUsContent {
   hero: {
     eyebrow: string
@@ -449,9 +464,12 @@ export interface WorkWithUsContent {
     subheadline: string
     ctaPrimary: CtaLink
   }
+  sectionLabels: WorkWithUsSectionLabels
   pillars: WorkPillar[]
   roles: WorkRole[]
+  roleCtaLabel: string
   opportunities: WorkOpportunity[]
+  opportunityApplyLabel: string
   alwaysRecruiting: {
     eyebrow: string
     headline: string
@@ -489,11 +507,64 @@ export interface ContactOffice {
   phone?: string
 }
 
+export type ContactEnquiryType =
+  | 'general'
+  | 'retail'
+  | 'media'
+  | 'employment'
+  | 'other'
+
+export interface ContactEnquiryOption {
+  value: ContactEnquiryType
+  label: string
+}
+
+export interface ContactFormLabels {
+  name: string
+  company: string
+  email: string
+  phone: string
+  enquiryType: string
+  message: string
+}
+
+export interface ContactFormPlaceholders {
+  name: string
+  company: string
+  email: string
+  phone: string
+  enquiryTypePlaceholder: string
+  message: string
+}
+
+export interface ContactFormValidation {
+  nameMin: string
+  emailInvalid: string
+  enquiryRequired: string
+  messageMin: string
+}
+
+export interface ContactFormContent {
+  heading: string
+  labels: ContactFormLabels
+  placeholders: ContactFormPlaceholders
+  enquiryOptions: ContactEnquiryOption[]
+  submitLabel: string
+  submittingLabel: string
+  successHeading: string
+  successBody: string
+  errorBody: string
+  validation: ContactFormValidation
+}
+
 export interface ContactContent {
   headline: string
   subheadline: string
   offices: ContactOffice[]
+  sidebarHeading: string
   badges: string[]
+  badgesHeading: string
+  form: ContactFormContent
 }
 
 export interface FarmMarker {
