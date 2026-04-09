@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(next build:*)",
+      "Bash(next dev:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(vercel:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Read(.env*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd $CLAUDE_PROJECT_DIR && pnpm tsc --noEmit 2>&1 | tail -15 && echo '── TypeScript check complete ──'"
+          }
+        ]
+      }
+    ]
+  }
+}

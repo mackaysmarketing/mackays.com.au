@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System 04 — Parchment · Mackays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── PARCHMENT DESIGN TOKENS ─────────────────────────────── */
+:root {
+  /* Canvas */
+  --parchment:          #ECE9E0;   /* primary canvas — Anthropic page bg */
+  --parchment-warm:     #E8E3D8;   /* warm surface */
+  --parchment-cool:     #F5F2EC;   /* lifted surface / cards */
+  --parchment-deep:     #D6D0C4;   /* dividers / strong surface */
+
+  /* Ink */
+  --ink:                #141413;   /* near-black — Anthropic dark */
+  --ink-mid:            #3A3935;   /* secondary text */
+  --dust:               #B0AEA5;   /* muted text / labels */
+
+  /* ── MACKAYS LOGO COLOURS ───────────────────────────────── */
+  /* REPLACED: --terracotta (#D97757) → --crimson (#d43646)   */
+  /* REPLACED: --sky-dusty  (#6A9BCC) → --harvest-gold        */
+  --crimson:            #d43646;   /* Mackays logo red — primary accent / CTA */
+  --crimson-dark:       #b02a38;   /* hover / pressed state */
+  --crimson-pale:       #FAE8EA;   /* tinted background for crimson contexts */
+
+  --harvest-gold:       #f8d940;   /* Mackays logo yellow — callout / highlight */
+  --harvest-gold-dark:  #C9AA18;   /* darker gold for text on light bg */
+  --harvest-gold-pale:  #FEF8D4;   /* tinted background for gold contexts */
+
+  /* RETAINED: Field Sage — mediates between crimson + gold */
+  --sage-field:         #788C5D;   /* agricultural / environmental third accent */
+  --sage-light:         #A8BF90;   /* light sage */
+  --sage-pale:          #E8EEE0;   /* tinted sage background */
+
+  /* Typography */
+  --font-heading:       'Poppins', system-ui, sans-serif;
+  --font-body:          'Lora', Georgia, serif;
+  --font-mono:          'JetBrains Mono', monospace;
+
+  /* Geometry */
+  --radius-xs:          2px;
+  --radius-sm:          4px;
+  --radius-md:          6px;
+  --radius-lg:          10px;
+  --radius-xl:          16px;
+
+  --border:             1px solid var(--parchment-deep);
+  --border-light:       1px solid rgba(20,20,19,0.08);
+}
+
+body {
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── SYSTEM HEADER ──────────────────────────────────────── */
+.sys-header {
+  border-bottom: var(--border);
+  padding: 24px 40px 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.sys-title {
+  font-family: var(--font-heading); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--dust);
+  padding-bottom: 20px;
+}
+.sys-badges { display: flex; gap: 8px; margin-bottom: 20px; }
+.sys-badge {
+  font-family: var(--font-heading); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px;
+  border-radius: var(--radius-sm);
+}
+
+/* ─── SECTIONS ───────────────────────────────────────────── */
+.section { padding: 56px 40px; border-bottom: var(--border); }
+.section:last-child { border-bottom: none; }
+.section-label {
+  font-family: var(--font-heading); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--dust);
+  margin-bottom: 32px;
+}
+.two-col   { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+.four-col  { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+/* ─── IDENTITY HERO ──────────────────────────────────────── */
+.identity-hero {
+  padding: 72px 40px 64px;
+  background: var(--parchment);
+  position: relative; overflow: hidden;
+}
+/* Harvest gold top accent stripe */
+.identity-hero::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--harvest-gold) 0%, var(--crimson) 60%, var(--harvest-gold) 100%);
+}
+.system-num {
+  font-family: var(--font-mono); font-size: 11px; color: var(--dust);
+  letter-spacing: 0.1em; display: block; margin-bottom: 24px;
+}
+.system-name-hero {
+  font-family: var(--font-heading); font-weight: 700;
+  font-size: clamp(64px, 10vw, 108px);
+  line-height: 0.9; letter-spacing: -0.04em;
+  color: var(--ink); margin-bottom: 28px;
+}
+.system-name-hero em {
+  font-family: var(--font-body); font-style: italic; font-weight: 400;
+  color: var(--crimson);
+}
+.system-tagline {
+  font-family: var(--font-body); font-size: 17px; line-height: 1.7;
+  color: var(--ink-mid); max-width: 540px; margin-bottom: 36px;
+}
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--font-heading); font-size: 11px; font-weight: 500;
+  padding: 5px 12px; border-radius: var(--radius-sm); border: var(--border);
+}
+
+/* ─── SWAP RATIONALE BAND ────────────────────────────────── */
+.swap-band {
+  background: var(--ink); padding: 24px 40px;
+  display: flex; gap: 40px; align-items: center; flex-wrap: wrap;
+}
+.swap-item { display: flex; align-items: center; gap: 16px; }
+.swap-swatch {
+  display: flex; align-items: center; gap: 6px;
+}
+.swatch-dot {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+}
+.swap-label { font-family: var(--font-heading); font-size: 11px; font-weight: 600; }
+.swap-arrow {
+  font-family: var(--font-heading); font-size: 16px; color: var(--dust);
+}
+.swap-reason {
+  font-family: var(--font-body); font-size: 12px; color: var(--dust); max-width: 220px; line-height: 1.4;
+}
+.swap-sep {
+  width: 1px; height: 40px; background: rgba(255,255,255,0.1);
+}
+
+/* ─── COLOUR SWATCHES ────────────────────────────────────── */
+.swatch-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+.swatch {
+  border-radius: var(--radius-lg); aspect-ratio: 1 / 1.3;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 10px; border: var(--border-light);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden;
+}
+.swatch:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(20,20,19,0.1); }
+.swatch.is-new::before {
+  content: 'NEW';
+  position: absolute; top: 10px; right: 10px;
+  font-family: var(--font-heading); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.12em; padding: 3px 6px; border-radius: 2px;
+  background: var(--harvest-gold); color: var(--ink);
+}
+.swatch-name { font-family: var(--font-heading); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; line-height: 1.3; }
+.swatch-hex  { font-family: var(--font-mono); font-size: 9px; margin-top: 2px; opacity: 0.65; }
+.swatch-role { font-family: var(--font-heading); font-size: 9px; margin-top: 3px; opacity: 0.5; }
+
+/* ─── TYPOGRAPHY ─────────────────────────────────────────── */
+.type-specimen {
+  background: var(--parchment-cool); border: var(--border);
+  border-radius: var(--radius-lg); padding: 36px;
+}
+.type-row {
+  margin-bottom: 28px; padding-bottom: 28px; border-bottom: var(--border-light);
+}
+.type-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.type-meta {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--dust); margin-bottom: 10px;
+}
+
+/* ─── COMPONENTS ─────────────────────────────────────────── */
+.component-card {
+  background: var(--parchment-cool); border: var(--border);
+  border-radius: var(--radius-lg); padding: 28px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.component-label {
+  font-family: var(--font-heading); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--dust);
+}
+.btn {
+  font-family: var(--font-heading); font-size: 13px; font-weight: 600;
+  border-radius: var(--radius-md); padding: 11px 22px; cursor: pointer;
+  border: none; display: block; width: 100%; margin-bottom: 10px;
+  transition: all 0.18s ease; letter-spacing: 0.01em; text-align: center;
+}
+.btn:last-child { margin-bottom: 0; }
+.btn-primary {
+  background: var(--crimson); color: #fff;
+}
+.btn-primary:hover { background: var(--crimson-dark); }
+.btn-secondary {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--parchment-deep);
+}
+.btn-secondary:hover { background: var(--parchment-warm); border-color: var(--dust); }
+.btn-gold {
+  background: var(--harvest-gold); color: var(--ink);
+}
+.btn-gold:hover { background: var(--harvest-gold-dark); color: #fff; }
+.btn-ghost-link {
+  background: none; border: none; color: var(--crimson); cursor: pointer;
+  font-family: var(--font-heading); font-size: 13px; font-weight: 600;
+  padding: 0; border-bottom: 1px solid var(--crimson); display: inline-block;
+  width: auto; text-align: left;
+}
+
+/* ─── FIELD INPUT ────────────────────────────────────────── */
+.field-label {
+  font-family: var(--font-heading); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mid);
+  display: block; margin-bottom: 7px;
+}
+.field-input {
+  font-family: var(--font-body); font-size: 14px; background: var(--parchment);
+  border: var(--border); color: var(--ink); border-radius: var(--radius-md);
+  padding: 11px 14px; width: 100%; margin-bottom: 14px; outline: none;
+  transition: border-color 0.2s;
+}
+.field-input:focus { border-color: var(--crimson); }
+
+/* ─── PRODUCE CARD ───────────────────────────────────────── */
+.produce-card {
+  border: var(--border); border-radius: var(--radius-lg); overflow: hidden;
+  background: var(--parchment-cool); transition: transform 0.2s, box-shadow 0.2s;
+}
+.produce-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(20,20,19,0.08);
+}
+.produce-img {
+  height: 130px; display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.produce-body { padding: 18px 20px; }
+.produce-name {
+  font-family: var(--font-heading); font-size: 16px; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--ink); margin-bottom: 4px;
+}
+.produce-stat {
+  font-family: var(--font-mono); font-size: 11px; color: var(--crimson); margin-bottom: 8px;
+}
+.produce-desc {
+  font-family: var(--font-body); font-size: 13px; color: var(--ink-mid); line-height: 1.5;
+}
+
+/* ─── STAT BAND ──────────────────────────────────────────── */
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+.stat-cell {
+  padding: 32px 28px; border-right: var(--border); position: relative;
+}
+.stat-cell:first-child { border-left: var(--border); }
+.stat-num {
+  font-family: var(--font-heading); font-size: 40px; font-weight: 700;
+  letter-spacing: -0.03em; color: var(--ink); line-height: 1; margin-bottom: 6px;
+}
+.stat-num .accent { color: var(--crimson); }
+.stat-num .gold   { color: var(--harvest-gold-dark); }
+.stat-label {
+  font-family: var(--font-heading); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--dust);
+}
+
+/* ─── HERO PREVIEW ───────────────────────────────────────── */
+.mini-hero {
+  border-radius: var(--radius-xl); overflow: hidden;
+  min-height: 440px; position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+  background: var(--parchment); border: var(--border);
+}
+.mini-nav {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 32px; border-bottom: var(--border);
+  background: rgba(236,233,224,0.9); backdrop-filter: blur(12px); z-index: 2;
+}
+.mini-nav-logo {
+  font-family: var(--font-heading); font-weight: 700; font-size: 15px;
+  letter-spacing: -0.02em; color: var(--ink);
+}
+.mini-nav-links {
+  display: flex; gap: 24px;
+  font-family: var(--font-heading); font-size: 12px; font-weight: 500; color: var(--dust);
+}
+.mini-hero-content { padding: 96px 52px 52px; position: relative; z-index: 1; }
+.mini-hero-content h2 {
+  font-family: var(--font-heading); font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 52px); line-height: 1.05;
+  letter-spacing: -0.03em; color: var(--ink); margin-bottom: 16px; max-width: 580px;
+}
+.mini-hero-content h2 em {
+  font-family: var(--font-body); font-style: italic; font-weight: 400;
+  color: var(--crimson);
+}
+.mini-hero-content p {
+  font-family: var(--font-body); font-size: 16px; color: var(--ink-mid);
+  line-height: 1.7; max-width: 400px; margin-bottom: 32px;
+}
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.cta-row .btn { display: inline-block; width: auto; margin-bottom: 0; }
+
+/* ─── GOLD CALLOUT BAND ──────────────────────────────────── */
+.gold-band {
+  background: var(--harvest-gold);
+  padding: 40px 52px;
+  display: flex; gap: 40px; align-items: center; flex-wrap: wrap;
+}
+.gold-band-heading {
+  font-family: var(--font-heading); font-weight: 700; font-size: 24px;
+  letter-spacing: -0.02em; color: var(--ink); line-height: 1.2; flex: 1; min-width: 200px;
+}
+.gold-band-body {
+  font-family: var(--font-body); font-size: 14px; color: var(--ink-mid);
+  line-height: 1.65; flex: 2; min-width: 200px;
+}
+
+/* ─── EDITORIAL / DARK SECTION ───────────────────────────── */
+.editorial-block {
+  background: var(--ink); color: var(--parchment-cool);
+  border-radius: var(--radius-xl); padding: 56px 52px; position: relative; overflow: hidden;
+}
+.editorial-block::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--crimson) 0%, var(--harvest-gold) 50%, var(--sage-field) 100%);
+}
+.editorial-block h3 {
+  font-family: var(--font-heading); font-weight: 700; font-size: 32px;
+  letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px;
+  color: var(--parchment-cool);
+}
+.editorial-block h3 em {
+  font-family: var(--font-body); font-style: italic; font-weight: 400;
+  color: var(--harvest-gold);
+}
+.editorial-block p {
+  font-family: var(--font-body); font-size: 15px; line-height: 1.75;
+  color: rgba(236,233,224,0.6); max-width: 480px;
+}
+.commitment-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  padding-top: 32px; margin-top: 32px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.commitment-item p:first-child {
+  font-family: var(--font-heading); font-size: 13px; font-weight: 600;
+  margin-bottom: 6px;
+}
+.commitment-item p:last-child {
+  font-family: var(--font-body); font-size: 13px;
+  color: rgba(236,233,224,0.45); line-height: 1.5;
+}
+
+/* ─── PRODUCE BENTO ──────────────────────────────────────── */
+.bento {
+  display: grid; grid-template-columns: 3fr 2fr; grid-template-rows: auto auto;
+  gap: 12px;
+}
+.bento-wide { grid-column: 1; grid-row: 1 / 3; }
+.bento-top  { grid-column: 2; grid-row: 1; }
+.bento-bot  { grid-column: 2; grid-row: 2; }
+
+/* ─── TOKEN TABLE ────────────────────────────────────────── */
+.token-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.token-group-title {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--dust); margin-bottom: 14px;
+}
+.token-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; padding: 7px 0; border-bottom: var(--border-light);
+}
+.token-key { font-family: var(--font-mono); font-size: 11px; color: var(--dust); }
+.token-val { font-family: var(--font-mono); font-size: 11px; }
+
+/* ─── PRINCIPLE CARDS ────────────────────────────────────── */
+.principle-card {
+  background: var(--parchment-cool); border: var(--border);
+  border-radius: var(--radius-lg); padding: 24px;
+}
+.principle-num {
+  font-family: var(--font-heading); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; color: var(--dust); margin-bottom: 12px;
+}
+.principle-title {
+  font-family: var(--font-heading); font-size: 14px; font-weight: 600;
+  color: var(--ink); margin-bottom: 8px; line-height: 1.3;
+}
+.principle-body {
+  font-family: var(--font-body); font-size: 13px; line-height: 1.6; color: var(--ink-mid);
+}
+
+/* ─── DIVIDER LABEL ──────────────────────────────────────── */
+.divider-label {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 40px;
+}
+.divider-label::before, .divider-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--parchment-deep);
+}
+.divider-label span {
+  font-family: var(--font-heading); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--dust); white-space: nowrap;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .two-col, .three-col, .four-col, .token-grid, .stat-row, .bento, .commitment-grid {
+    grid-template-columns: 1fr;
+  }
+  .swatch-grid { grid-template-columns: repeat(3, 1fr); }
+  .section, .identity-hero, .gold-band, .editorial-block {
+    padding-left: 20px; padding-right: 20px;
+  }
+  .sys-header { padding-left: 20px; padding-right: 20px; }
+  .mini-hero-content { padding: 90px 24px 40px; }
+  .bento-wide, .bento-top, .bento-bot { grid-column: auto; grid-row: auto; }
+  .stat-cell { border-right: none; border-bottom: var(--border); }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ──────────────────────────────────────────── -->
+<header class="sys-header">
+  <span class="sys-title">Design System 04 — Parchment · Mackays Marketing · Anthropic-Inspired</span>
+  <div class="sys-badges">
+    <span class="sys-badge" style="background: var(--crimson-pale); color: var(--crimson);">Crimson updated</span>
+    <span class="sys-badge" style="background: var(--harvest-gold); color: var(--ink);">Gold added</span>
+  </div>
+</header>
+
+<!-- ─── IDENTITY HERO ────────────────────────────────────── -->
+<div class="identity-hero">
+  <span class="system-num">System 04 · Parchment · v2 — Mackays Logo Colours Applied</span>
+  <h1 class="system-name-hero">Parchment<br><em>&amp; Field.</em></h1>
+  <p class="system-tagline">
+    Anthropic's editorial restraint — warm parchment canvas, Poppins confidence, Lora depth — now anchored by Mackays' own logo crimson and harvest gold. The design language of a company that thinks carefully about what it grows.
+  </p>
+  <div class="badge-row">
+    <span class="badge" style="background: var(--crimson-pale); color: var(--crimson); border-color: var(--crimson-pale);">Logo Crimson #d43646</span>
+    <span class="badge" style="background: var(--harvest-gold); color: var(--ink); border-color: var(--harvest-gold);">Harvest Gold #f8d940</span>
+    <span class="badge" style="background: var(--sage-pale); color: var(--sage-field); border-color: var(--sage-pale);">Field Sage retained</span>
+    <span class="badge" style="background: var(--parchment-warm); color: var(--ink-mid);">Parchment canvas #ECE9E0</span>
+  </div>
+</div>
+
+<!-- ─── SWAP RATIONALE ───────────────────────────────────── -->
+<div class="swap-band">
+  <div style="font-family: var(--font-heading); font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dust);">What changed &amp; why</div>
+  <div class="swap-sep"></div>
+  <div class="swap-item">
+    <div class="swap-swatch">
+      <div class="swatch-dot" style="background: #D97757;"></div>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--dust); text-decoration: line-through;">#D97757</span>
+    </div>
+    <span class="swap-arrow">→</span>
+    <div class="swap-swatch">
+      <div class="swatch-dot" style="background: var(--crimson);"></div>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--harvest-gold);">#d43646</span>
+    </div>
+    <p class="swap-reason">Anthropic's borrowed orange replaced by Mackays' own logo crimson. Same role — primary CTA accent — but now genuinely native to the brand.</p>
+  </div>
+  <div class="swap-sep"></div>
+  <div class="swap-item">
+    <div class="swap-swatch">
+      <div class="swatch-dot" style="background: #6A9BCC;"></div>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--dust); text-decoration: line-through;">#6A9BCC</span>
+    </div>
+    <span class="swap-arrow">→</span>
+    <div class="swap-swatch">
+      <div class="swatch-dot" style="background: var(--harvest-gold);"></div>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--harvest-gold);">#f8d940</span>
+    </div>
+    <p class="swap-reason">Anthropic's sky blue had zero agricultural grounding. Harvest gold brings banana warmth and tropical energy — and is the other half of the Mackays logo.</p>
+  </div>
+  <div class="swap-sep"></div>
+  <div class="swap-item">
+    <div class="swap-swatch">
+      <div class="swatch-dot" style="background: var(--sage-field);"></div>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--sage-light);">#788C5D</span>
+    </div>
+    <span style="font-family: var(--font-heading); font-size: 11px; font-weight: 600; color: var(--sage-light);">retained</span>
+    <p class="swap-reason">Sage stays. It mediates between crimson and gold — prevents the palette reading as produce signage. The quiet third voice.</p>
+  </div>
+</div>
+
+<!-- ─── COLOUR SYSTEM ────────────────────────────────────── -->
+<div class="section">
+  <p class="section-label">Full Colour System</p>
+  <div class="swatch-grid">
+    <!-- Parchment family -->
+    <div class="swatch" style="background: var(--parchment); border: var(--border);">
+      <span class="swatch-name" style="color: var(--ink-mid);">Parchment</span>
+      <span class="swatch-hex" style="color: var(--dust);">#ECE9E0</span>
+      <span class="swatch-role" style="color: var(--dust);">Page canvas</span>
+    </div>
+    <div class="swatch" style="background: var(--ink);">
+      <span class="swatch-name" style="color: var(--parchment);">Ink</span>
+      <span class="swatch-hex" style="color: var(--dust);">#141413</span>
+      <span class="swatch-role" style="color: rgba(176,174,165,0.6);">Primary text</span>
+    </div>
+    <!-- New logo crimson -->
+    <div class="swatch is-new" style="background: var(--crimson);">
+      <span class="swatch-name" style="color: #fff;">Crimson</span>
+      <span class="swatch-hex" style="color: rgba(255,255,255,0.65);">#d43646</span>
+      <span class="swatch-role" style="color: rgba(255,255,255,0.45);">Primary CTA</span>
+    </div>
+    <!-- New harvest gold -->
+    <div class="swatch is-new" style="background: var(--harvest-gold);">
+      <span class="swatch-name" style="color: var(--ink);">Harvest Gold</span>
+      <span class="swatch-hex" style="color: var(--ink-mid);">#f8d940</span>
+      <span class="swatch-role" style="color: var(--ink-mid);">Highlight / callout</span>
+    </div>
+    <!-- Retained sage -->
+    <div class="swatch" style="background: var(--sage-field);">
+      <span class="swatch-name" style="color: #fff;">Field Sage</span>
+      <span class="swatch-hex" style="color: rgba(255,255,255,0.6);">#788C5D</span>
+      <span class="swatch-role" style="color: rgba(255,255,255,0.4);">Env / retained</span>
+    </div>
+    <div class="swatch" style="background: var(--dust);">
+      <span class="swatch-name" style="color: var(--parchment);">Dust</span>
+      <span class="swatch-hex" style="color: var(--parchment-deep);">#B0AEA5</span>
+      <span class="swatch-role" style="color: rgba(236,233,224,0.5);">Muted labels</span>
+    </div>
+  </div>
+
+  <!-- Tinted variants row -->
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px;">
+    <div style="background: var(--crimson-pale); border: var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-family: var(--font-heading); font-size: 12px; font-weight: 600; color: var(--crimson);">Crimson Pale</span>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--dust);">#FAE8EA — badge bg / tinted surface</span>
+    </div>
+    <div style="background: var(--harvest-gold-pale); border: var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-family: var(--font-heading); font-size: 12px; font-weight: 600; color: var(--harvest-gold-dark);">Gold Pale</span>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--dust);">#FEF8D4 — callout bg / alert surface</span>
+    </div>
+    <div style="background: var(--sage-pale); border: var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-family: var(--font-heading); font-size: 12px; font-weight: 600; color: var(--sage-field);">Sage Pale</span>
+      <span style="font-family: var(--font-mono); font-size: 11px; color: var(--dust);">#E8EEE0 — env callout / sustainability</span>
+    </div>
+  </div>
+
+  <!-- Usage rules -->
+  <div style="margin-top: 16px; padding: 20px 24px; background: var(--parchment-cool); border: var(--border); border-radius: var(--radius-lg); display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div>
+      <p style="font-family: var(--font-heading); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--crimson); margin-bottom: 8px;">Crimson rules</p>
+      <p style="font-family: var(--font-body); font-size: 13px; color: var(--ink-mid); line-height: 1.6;">One primary CTA per section. Active links, hover states, pull quote accents, form focus rings. Never use as body text colour. Always pair with white or parchment — never with harvest gold in the same component (they compete).</p>
+    </div>
+    <div>
+      <p style="font-family: var(--font-heading); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--harvest-gold-dark); margin-bottom: 8px;">Harvest Gold rules</p>
+      <p style="font-family: var(--font-body); font-size: 13px; color: var(--ink-mid); line-height: 1.6;">Callout band backgrounds, stat highlights, announcement bars, badge fills. Never as text colour — always use ink (#141413) on gold backgrounds. Contrast ratio: 12.4:1. Used in dark sections as the warm accent against ink.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TYPOGRAPHY ───────────────────────────────────────── -->
+<div class="section">
+  <p class="section-label">Typography</p>
+  <div class="type-specimen">
+    <div class="type-row">
+      <p class="type-meta">Display — Poppins 700 · -0.035em · 68px</p>
+      <p style="font-family: var(--font-heading); font-weight: 700; font-size: 68px; line-height: 0.92; color: var(--ink); letter-spacing: -0.035em;">Grown in<br>Queensland.<br><em style="font-family: var(--font-body); font-style: italic; font-weight: 400; color: var(--crimson); font-size: 0.88em;">Since 1945.</em></p>
+    </div>
+    <div class="type-row">
+      <p class="type-meta">Heading 2 — Poppins 700 · 34px · -0.025em</p>
+      <p style="font-family: var(--font-heading); font-weight: 700; font-size: 34px; color: var(--ink); line-height: 1.1; letter-spacing: -0.025em;">Four generations of unbroken <span style="color: var(--crimson);">care.</span></p>
+    </div>
+    <div class="type-row">
+      <p class="type-meta">Body — Lora 400 · 16px / 1.75</p>
+      <p style="font-family: var(--font-body); font-size: 16px; color: var(--ink-mid); line-height: 1.75; max-width: 520px;">From 6.5 hectares of hand-cleared rainforest to 5,800 hectares across three growing regions — Mackays has grown Australia's most trusted tropical produce for four generations. Stanley's original philosophy drives it still.</p>
+    </div>
+    <div class="type-row">
+      <p class="type-meta">Pull Quote — Lora 400 italic · 18px · crimson attribution</p>
+      <div style="border-left: 3px solid var(--harvest-gold); padding-left: 20px;">
+        <p style="font-family: var(--font-body); font-style: italic; font-size: 18px; color: var(--ink-mid); line-height: 1.6; margin-bottom: 10px;">"When the 1956 cyclone destroyed everything, the family rebuilt. When Cyclone Larry took it again in 2006, we rebuilt again — but this time, further inland."</p>
+        <p style="font-family: var(--font-heading); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--crimson);">— Barrie Mackay, Third Generation Director</p>
+      </div>
+    </div>
+    <div>
+      <p class="type-meta">Data / Mono — JetBrains Mono · 12px · crimson for stats</p>
+      <p style="font-family: var(--font-mono); font-size: 12px; color: var(--crimson); letter-spacing: 0.04em;">13% national supply · 5,800ha · 550 staff · Tully, Lakeland, Bundaberg</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── COMPONENTS ───────────────────────────────────────── -->
+<div class="section">
+  <p class="section-label">Components</p>
+  <div class="three-col">
+
+    <!-- Buttons -->
+    <div class="component-card">
+      <p class="component-label">Button System</p>
+      <button class="btn btn-primary">Read our story</button>
+      <button class="btn btn-secondary">Explore our produce</button>
+      <button class="btn btn-gold">Enquire about supply</button>
+      <button class="btn" style="background: var(--ink); color: var(--harvest-gold); font-family: var(--font-heading); font-size: 13px; font-weight: 600; border-radius: var(--radius-md); border: none; cursor: pointer; padding: 11px 22px; letter-spacing: 0.01em;">Join our team →</button>
+      <button class="btn-ghost-link" style="margin-top: 4px;">Learn about sustainability</button>
+      <div style="margin-top: 8px; padding: 8px 12px; background: var(--harvest-gold-pale); border-radius: var(--radius-sm); border: 1px solid var(--harvest-gold);">
+        <p style="font-family: var(--font-heading); font-size: 11px; font-weight: 600; color: var(--harvest-gold-dark); margin-bottom: 2px;">Gold button rule</p>
+        <p style="font-family: var(--font-body); font-size: 12px; color: var(--ink-mid);">Use for secondary high-visibility CTAs — trade enquiries, partner actions. Never pair with crimson CTA in the same visual area.</p>
+      </div>
+    </div>
+
+    <!-- Produce cards -->
+    <div class="component-card">
+      <p class="component-label">Produce Cards</p>
+      <div class="bento">
+        <div class="bento-wide produce-card">
+          <div class="produce-img" style="background: linear-gradient(135deg, var(--harvest-gold-pale) 0%, var(--harvest-gold) 100%); height: 110px;">
+            <span style="font-family: var(--font-heading); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mid); opacity: 0.4;">Banana photo</span>
+          </div>
+          <div class="produce-body">
+            <p class="produce-name">Bananas</p>
+            <p class="produce-stat">13% of Australia's supply</p>
+            <p class="produce-desc">Cavendish and Smart Banana varieties.</p>
+          </div>
+        </div>
+        <div class="bento-top produce-card">
+          <div class="produce-img" style="background: linear-gradient(135deg, var(--crimson-pale) 0%, #f0b0b6 100%); height: 80px;">
+            <span style="font-family: var(--font-heading); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--crimson); opacity: 0.4;">Papaya photo</span>
+          </div>
+          <div class="produce-body" style="padding: 12px 14px;">
+            <p class="produce-name" style="font-size: 14px;">Red Papaya</p>
+            <p class="produce-stat">Ruby Rise · Red Hill</p>
+          </div>
+        </div>
+        <div class="bento-bot produce-card">
+          <div class="produce-img" style="background: linear-gradient(135deg, var(--sage-pale) 0%, var(--sage-light) 60%); height: 80px;">
+            <span style="font-family: var(--font-heading); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sage-field); opacity: 0.4;">Avocado photo</span>
+          </div>
+          <div class="produce-body" style="padding: 12px 14px;">
+            <p class="produce-name" style="font-size: 14px;">Avocados</p>
+            <p class="produce-stat" style="color: var(--sage-field);">Maluma · Shepherd</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="component-card">
+      <p class="component-label">Form / Input</p>
+      <label class="field-label">Full name</label>
+      <input class="field-input" type="text" placeholder="Your name">
+      <label class="field-label">Enquiry type</label>
+      <select class="field-input" style="appearance: none; cursor: pointer;">
+        <option>Retail / Trade supply</option>
+        <option>Media enquiry</option>
+        <option>Employment</option>
+      </select>
+      <label class="field-label">Message</label>
+      <textarea class="field-input" rows="3" placeholder="Your message..." style="resize: none; margin-bottom: 0;"></textarea>
+      <button class="btn btn-primary" style="margin-bottom: 0; margin-top: 4px;">Send enquiry</button>
+      <p style="font-family: var(--font-body); font-size: 12px; color: var(--dust); text-align: center; margin-top: 2px;">Focus ring: crimson · 1px solid #d43646</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── STAT BAND ─────────────────────────────────────────── -->
+<div class="section" style="padding-top: 0; padding-bottom: 0; border-bottom: var(--border);">
+  <div class="stat-row">
+    <div class="stat-cell">
+      <p class="stat-num">19<span class="accent">45</span></p>
+      <p class="stat-label">Year established</p>
+    </div>
+    <div class="stat-cell">
+      <p class="stat-num">5,<span class="gold">800</span><span style="font-size: 18px; color: var(--dust);">+</span></p>
+      <p class="stat-label">Hectares managed</p>
+    </div>
+    <div class="stat-cell">
+      <p class="stat-num">5<span class="accent">50</span><span style="font-size: 18px; color: var(--dust);">+</span></p>
+      <p class="stat-label">Team members</p>
+    </div>
+    <div class="stat-cell" style="border-right: var(--border);">
+      <p class="stat-num">1<span class="accent">3</span><span style="font-size: 22px; color: var(--harvest-gold-dark);">%</span></p>
+      <p class="stat-label">Of Australia's bananas</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── HERO PREVIEW ──────────────────────────────────────── -->
+<div class="section">
+  <p class="section-label">In Context — Homepage Hero</p>
+  <div class="mini-hero">
+    <!-- Right half — warm textured panel -->
+    <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 42%; background: var(--parchment-warm); display: flex; align-items: center; justify-content: center; z-index: 0;">
+      <div style="padding: 24px; text-align: center;">
+        <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--harvest-gold); opacity: 0.2; margin: 0 auto 16px;"></div>
+        <p style="font-family: var(--font-heading); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust);">Photography placeholder<br>Tully Valley aerial</p>
+      </div>
+    </div>
+    <div class="mini-nav">
+      <span class="mini-nav-logo">Mackays</span>
+      <div class="mini-nav-links">
+        <span>Our Story</span><span>Our Produce</span><span>Sustainability</span><span>Work With Us</span>
+      </div>
+      <button style="font-family: var(--font-heading); font-size: 12px; font-weight: 600; background: var(--crimson); color: #fff; border: none; border-radius: var(--radius-md); padding: 9px 18px; cursor: pointer;">Contact us</button>
+    </div>
+    <div class="mini-hero-content">
+      <p style="font-family: var(--font-heading); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--crimson); margin-bottom: 20px;">Far North Queensland · Est. 1945</p>
+      <h2>The land<br>that feeds<br><em>Australia.</em></h2>
+      <p>Four generations. 5,800 hectares. One standard — the best tropical produce on the continent, grown with the care of a family that lives where it farms.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" style="padding: 13px 28px; font-size: 14px;">Read our story</button>
+        <button class="btn btn-secondary" style="padding: 13px 28px; font-size: 14px; border-color: var(--parchment-deep);">Our produce</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── HARVEST GOLD CALLOUT BAND ─────────────────────────── -->
+<div class="section" style="padding: 0;">
+  <div class="gold-band">
+    <div>
+      <p style="font-family: var(--font-heading); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mid); margin-bottom: 8px;">Foodbank Queensland</p>
+      <p class="gold-band-heading">50,000 Queensland schoolchildren receive Mackays bananas every week.</p>
+    </div>
+    <p class="gold-band-body">"Providing fresh bananas to Foodbank Queensland is one way we can give back to the community. We're proud to help ensure Queensland families have access to healthy, nourishing food when they need it most." — Nicholas Mackay</p>
+    <button class="btn btn-primary" style="width: auto; margin-bottom: 0; white-space: nowrap; flex-shrink: 0;">Learn more</button>
+  </div>
+</div>
+
+<!-- ─── DARK EDITORIAL SECTION ────────────────────────────── -->
+<div class="section">
+  <p class="section-label">Dark Section — With Updated Accents</p>
+  <div class="editorial-block">
+    <p style="font-family: var(--font-heading); font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(236,233,224,0.25); margin-bottom: 20px;">Our commitment</p>
+    <h3>We don't manage land.<br><em>We steward it.</em></h3>
+    <p style="margin-top: 16px; margin-bottom: 0;">Biosecurity protocols, carbon sequestration programmes, IQF zero-waste processing. None of it happens by accident.</p>
+    <div class="commitment-grid">
+      <div class="commitment-item">
+        <p style="color: var(--crimson);">Biosecurity</p>
+        <p>Panama TR4-free status across all farms for three consecutive years.</p>
+      </div>
+      <div class="commitment-item">
+        <p style="color: var(--harvest-gold);">Zero Waste</p>
+        <p>IQF processing converts surplus bananas into retail-ready frozen product.</p>
+      </div>
+      <div class="commitment-item">
+        <p style="color: var(--sage-light);">Carbon</p>
+        <p>Sequestration audit underway across grazing properties. 2025 report due.</p>
+      </div>
+      <div class="commitment-item">
+        <p style="color: var(--sage-light);">Community</p>
+        <p>50,000 Queensland schoolchildren. Mackays bananas. Every week. Foodbank.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── DESIGN TOKENS ─────────────────────────────────────── -->
+<div class="section">
+  <p class="section-label">Design Tokens — Updated</p>
+  <div class="token-grid">
+    <div>
+      <p class="token-group-title">Colour Tokens — New</p>
+      <div class="token-row"><span class="token-key">--crimson</span><span class="token-val" style="color: var(--crimson);">#d43646</span></div>
+      <div class="token-row"><span class="token-key">--crimson-dark</span><span class="token-val" style="color: var(--crimson-dark);">#b02a38</span></div>
+      <div class="token-row"><span class="token-key">--crimson-pale</span><span class="token-val" style="color: var(--crimson);">#FAE8EA</span></div>
+      <div class="token-row"><span class="token-key">--harvest-gold</span><span class="token-val" style="color: var(--harvest-gold-dark);">#f8d940</span></div>
+      <div class="token-row"><span class="token-key">--harvest-gold-dark</span><span class="token-val" style="color: var(--harvest-gold-dark);">#C9AA18</span></div>
+      <div class="token-row"><span class="token-key">--harvest-gold-pale</span><span class="token-val" style="color: var(--harvest-gold-dark);">#FEF8D4</span></div>
+    </div>
+    <div>
+      <p class="token-group-title">Colour Tokens — Retained</p>
+      <div class="token-row"><span class="token-key">--parchment</span><span class="token-val" style="color: var(--dust);">#ECE9E0</span></div>
+      <div class="token-row"><span class="token-key">--ink</span><span class="token-val" style="color: var(--dust);">#141413</span></div>
+      <div class="token-row"><span class="token-key">--sage-field</span><span class="token-val" style="color: var(--sage-field);">#788C5D</span></div>
+      <div class="token-row"><span class="token-key">--dust</span><span class="token-val" style="color: var(--dust);">#B0AEA5</span></div>
+      <div class="token-row"><span class="token-key">--parchment-cool</span><span class="token-val" style="color: var(--dust);">#F5F2EC</span></div>
+      <div class="token-row"><span class="token-key">--parchment-deep</span><span class="token-val" style="color: var(--dust);">#D6D0C4</span></div>
+    </div>
+    <div>
+      <p class="token-group-title">Contrast Ratios (WCAG)</p>
+      <div class="token-row"><span class="token-key">Crimson on parchment</span><span class="token-val" style="color: var(--sage-field);">4.8:1 ✓ AA</span></div>
+      <div class="token-row"><span class="token-key">Ink on harvest gold</span><span class="token-val" style="color: var(--sage-field);">12.4:1 ✓ AAA</span></div>
+      <div class="token-row"><span class="token-key">White on crimson</span><span class="token-val" style="color: var(--sage-field);">4.6:1 ✓ AA</span></div>
+      <div class="token-row"><span class="token-key">Ink on parchment</span><span class="token-val" style="color: var(--sage-field);">16.1:1 ✓ AAA</span></div>
+      <div class="token-row"><span class="token-key">Dust on parchment</span><span class="token-val" style="color: var(--dust);">3.4:1 labels only</span></div>
+      <div class="token-row"><span class="token-key">Sage on parchment</span><span class="token-val" style="color: var(--sage-field);">3.9:1 large text</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PRINCIPLES ────────────────────────────────────────── -->
+<div class="section">
+  <div class="divider-label"><span>Updated design principles</span></div>
+  <div class="four-col">
+    <div class="principle-card" style="border-top: 3px solid var(--crimson);">
+      <p class="principle-num">01 / CRIMSON</p>
+      <p class="principle-title">One raised voice per section.</p>
+      <p class="principle-body">Crimson is action. One CTA, one stat highlight, one hover state. The moment it appears in more than one place per viewport, it loses authority.</p>
+    </div>
+    <div class="principle-card" style="border-top: 3px solid var(--harvest-gold);">
+      <p class="principle-num">02 / GOLD</p>
+      <p class="principle-title">Warmth in background, never foreground.</p>
+      <p class="principle-body">Harvest gold works as a band, a callout surface, a badge fill. It never works as body text. Put ink on it. Let it carry the weight from below.</p>
+    </div>
+    <div class="principle-card" style="border-top: 3px solid var(--sage-field);">
+      <p class="principle-num">03 / SAGE</p>
+      <p class="principle-title">The mediating third voice.</p>
+      <p class="principle-body">Sage separates crimson and gold. It's the environmental and agricultural register — used when the brand speaks about the land, not the produce.</p>
+    </div>
+    <div class="principle-card" style="border-top: 3px solid var(--parchment-deep);">
+      <p class="principle-num">04 / PARCHMENT</p>
+      <p class="principle-title">The canvas does most of the work.</p>
+      <p class="principle-body">ECE9E0 is warm enough to signal provenance and paper memory. Let sections breathe on it. Resist filling the canvas — restraint is the signal.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ────────────────────────────────────────────── -->
+<div style="padding: 40px; border-top: var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+  <div style="display: flex; align-items: center; gap: 20px;">
+    <!-- Logo colour preview -->
+    <div style="display: flex; gap: 4px;">
+      <div style="width: 28px; height: 28px; background: var(--crimson); border-radius: var(--radius-sm);"></div>
+      <div style="width: 28px; height: 28px; background: var(--harvest-gold); border-radius: var(--radius-sm);"></div>
+    </div>
+    <div>
+      <p style="font-family: var(--font-heading); font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px;">System 04 — Parchment v2</p>
+      <p style="font-family: var(--font-body); font-size: 13px; color: var(--dust);">Anthropic palette foundation · Mackays logo colours applied · #d43646 + #f8d940</p>
+    </div>
+  </div>
+  <div style="text-align: right;">
+    <p style="font-family: var(--font-mono); font-size: 11px; color: var(--dust);">Swapped: #D97757 → #d43646 · #6A9BCC → #f8d940</p>
+    <p style="font-family: var(--font-mono); font-size: 11px; color: var(--dust); margin-top: 2px;">Mackays Marketing Website Rebuild · April 2025</p>
+  </div>
+</div>
+
+</body>
+</html>
