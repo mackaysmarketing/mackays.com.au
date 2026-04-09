@@ -1,130 +1,135 @@
-# Handoff: Phase 5 — Our Produce (overview + 6 crop pages)
+# Handoff: Phase 6 — People & Environment
 Date: 2026-04-10
 Session type: Build
 
 ## What was completed
 
-### Our Produce overview — `app/our-produce/page.tsx`
-Server component. Six sections in the order specified in the brief,
-every string sourced from `@/content`:
+### People & Environment page — `app/people-and-environment/page.tsx`
+Server component composing seven sections in the exact order from the
+brief. Every visible string is sourced from `@/content` — no inline copy
+anywhere on the page. Prerendered as static content alongside all other
+routes.
 
-1. **KineticHero** — three-line headline `"Six crops.\nThree regions.\nOne standard."` (see the KineticHero change below), `imageSeed={10}`, primary CTA "Explore bananas" → `/our-produce/bananas`, subheadline uses `PRODUCE.overview.intro`
-2. **BentoProduceGrid** — wrapped in a `SectionHeader` ("What we grow" / "Every crop chosen for where we farm it.")
-3. **SupplyChainExplainer** — wrapped in a `SectionHeader` ("Supply Chain" / "Farm to shelf in 48 hours.")
-4. **Smart Banana SplitScreenParallax** — children wrapped in a `border-t-4 border-harvest-gold pt-6` block with eyebrow/headline/body from `PRODUCE.smartBanana`
-5. **IQF ink band** — `bg-ink` wrapper, `SectionHeader tone="parchment"`, `PRODUCE.iqf.body`, `ImagePlaceholder seed={130}` rounded
-6. **Trade CTA band** — continuation inside the same ink section. "Want to stock Mackays produce?" headline and a gold `Button` linking to `mailto:trade@mackays.com.au`
-
-### Crop pages — `app/our-produce/[crop]/page.tsx`
-Dynamic server component with `generateStaticParams()` returning all six
-`CROP_SLUGS`. Prerenders six static crop routes at build time:
-`/our-produce/bananas`, `/red-papaya`, `/avocados`, `/sugar-cane`,
-`/cattle`, `/passionfruit`.
-
-Per-crop sections:
-1. **Hero** — `h-[70vh] min-h-[520px]`, `ImagePlaceholder fill priority seed={crop.heroSeed}`, `bg-ink/40` overlay, absolute content block with breadcrumb (`Our Produce` → `{crop.name}`), `clamp(52px,8vw,88px)` crimson-bold headline, Lora italic harvest-gold tagline
-2. **Story** — `<SplitScreenParallax>` with `crop.storySeed`, `crop.eyebrow`, `crop.storyHeadline`, `crop.story`
-3. **Growing conditions** — `grid-cols-2 md:grid-cols-4`, four bordered cards with Lucide `Layers` / `CloudRain` / `MapPin` / `Calendar` icons, labels from `PRODUCE.cropPage.growing`, values from `crop.growing`
-4. **Varieties** — conditional, only when `crop.varieties` is defined and non-empty (bananas, red papaya, avocados). Eyebrow "Our Varieties", headline templated with the crop name lowercased via `PRODUCE.cropPage.varieties.headlineTemplate.replace('{crop}', …)`
-5. **PullQuoteSection** — `crop.pullQuote`
-6. **Related produce** — three other crops (filtered by slug, sliced to 3) as linked cards with hover scale
-7. **GoldCalloutBand** — trade callout with `cta.href={`/contact?ref=${crop.slug}`}`
-
-`generateMetadata()` returns per-crop:
-- title: `${crop.name} | Mackays — Far North Queensland`
-- description: `${crop.tagline} Grown by Mackays Marketing in Far North Queensland.`
-
-Routing safety: `notFound()` when `params.crop` isn't in `CROP_SLUGS`
-(guarded via a `isCropSlug` type predicate), and `generateMetadata` also
-falls back to `"Crop not found | Mackays"` rather than throwing.
-
-### New section components
-
-**`src/components/sections/BentoProduceGrid.tsx`** — client component.
-- Props: `items: BentoGridItem[]`, `crops: Record<CropSlug, CropData>`
-- `grid-cols-1 md:grid-cols-5 gap-4`. Each item's Tailwind `span` + `minHeight` classes come from the content layer, so the bento layout is fully data-driven.
-- Auto-placement works because items are listed in CROP_SLUGS order: Bananas (`md:col-span-3 md:row-span-2 min-h-[520px]`) occupies the left 3×2 block, Red Papaya + Avocados stack 2-wide on the right, then Sugar Cane (2), Cattle (2), Passionfruit (1) span the bottom row.
-- Each card: `<Link>` to `/our-produce/${slug}`, `ImagePlaceholder fill` that scales on hover, bottom gradient, Badge (with content-driven variant), crop name, tagline.
-- GSAP `useGSAP` + ScrollTrigger: `opacity 0→1`, `y 30→0`, stagger 0.1, `power2.out`, `toggleActions 'play none none reverse'`. Reduced-motion snaps to the final state.
-
-**`src/components/sections/SupplyChainExplainer.tsx`** — client component.
-- Props: `steps: SupplyChainStep[]`
-- Flex row (column on mobile). Each step: 48 px `bg-parchment-deep` circle with a Lucide icon (`MapPin` / `Package` / `ShoppingCart` resolved via a typed `ICON_MAP`), step label, title, subtitle.
-- Desktop-only connector: `hidden md:block h-px w-10 bg-parchment-deep` between adjacent steps, animated `scaleX 0→1` with `transformOrigin: 'left center'` on ScrollTrigger.
-- Steps also fade+translate in with their own ScrollTrigger. Reduced-motion sets everything to the final state.
-
-### KineticHero update
-- Previously split the headline on `|` only, yielding an optional accent segment below the primary one.
-- Now first splits on `\n` into lines, then for each line handles an optional `|` that marks a "break + accent styling" boundary. Each resulting line renders as a `span.block` with word-by-word reveal via the existing `[data-kh-word]` hook.
-- Phase 3 (`"The land that feeds Australia."`) still produces a single line. Phase 5 (`"Six crops.\nThree regions.\nOne standard."`) now produces three primary lines. Phase 6 (`"550 people. Three regions.|One standard — theirs."`) will produce two lines, the second in Lora italic harvest-gold — no behaviour change on that case.
-
-### Content layer extensions — `PRODUCE`
-- **`overview.hero`** — eyebrow, multi-line headline, imageAlt, primary CTA (zero inline strings in the overview page)
-- **`overview.bento`** — eyebrow, headline, `items: BentoGridItem[]` with `{ slug, seed, stat, badgeVariant, span, minHeight }` for all six crops
-- **`overview.supplyChain`** — eyebrow, headline, `steps: SupplyChainStep[]`  with `{ stepLabel, icon: 'MapPin' | 'Package' | 'ShoppingCart', title, subtitle }`
-- **`overview.iqfBand`** — eyebrow, headline, imageAlt, imageSeed (for the IQF section's framing)
-- **`overview.tradeBand`** — headline + CTA for the "Want to stock Mackays produce?" band
-- **`cropPage`** — `breadcrumb`, `growing: { soil, climate, region, harvest }` labels, `varieties: { eyebrow, headlineTemplate }`, `related: { eyebrow, headline, moreAriaLabel }`, `tradeCallout: { eyebrow, headline, ctaLabel }`
-- New types in `src/content/types.ts`: `SupplyChainIcon`, `SupplyChainStep`, `BadgeTone`, `BentoGridItem`, `ProduceOverview`, `CropPageLabels`
-
-## Quality gates
-- `pnpm tsc --noEmit` — clean (exit 0)
-- `pnpm build` — clean; **10 prerendered routes total**:
-  - `/`, `/our-story`, `/our-produce`, and six crop pages (`/our-produce/bananas`, `…/red-papaya`, `…/avocados`, `…/sugar-cane`, `…/cattle`, `…/passionfruit`) under the SSG symbol, plus `/_not-found`
-- Zero inline strings anywhere in the 7 new pages (overview + 6 crop pages). All labels, hero copy, growing-card labels, breadcrumb text, trade-callout copy and CTA labels read from `@/content`.
-- No hardcoded hex in any new component — `BentoProduceGrid` resolves badge variants from content; `SupplyChainExplainer` resolves icons via a typed `ICON_MAP`; `GROWING_ICON_MAP` in the crop page maps the four growing keys to Lucide components.
-- `prefers-reduced-motion` honoured in both new client components, and in KineticHero via the existing guard.
-
-## Known notes / decisions
-- **Bento layout is data-driven.** The per-item `span` + `minHeight` classes live on `BentoGridItem` in content rather than being hard-coded in the component. That keeps the layout decision reviewable alongside the copy and makes it easy to reshuffle without touching component code.
-- **Banana hero copy / stat:** Bananas is the only crop in the bento with the feature tile, carrying the `13% of national supply` stat line. These stats are page-local framing, same principle as in Phase 3 — they live in the content file for the page that uses them, not on `PRODUCE_DATA`.
-- **Growing card labels are content, values are `CropData`.** `PRODUCE.cropPage.growing` holds the four label strings ("Soil", "Climate", "Region", "Harvest"); `crop.growing` holds the per-crop values. Keeps the translation story and copy story separate from the crop data.
-- **Varieties template:** `PRODUCE.cropPage.varieties.headlineTemplate = "Two ways we grow {crop}."`. At render the page substitutes `{crop}` with `crop.name.toLowerCase()`, giving e.g. "Two ways we grow bananas." Phase 2 intentionally only populated varieties for bananas / red papaya / avocados — the varieties section is skipped on sugar cane, cattle and passionfruit, per the brief.
-- **Related produce picks the first three crops in `CROP_SLUGS` that aren't the current one.** Deterministic and cheap — no shuffling. If a curator wants to hand-pick related crops per page, it's a one-line change to pull from a `related: CropSlug[]` field on `CropData`.
-- **Next.js 16 async params:** both `generateMetadata` and the page accept `params: Promise<{ crop: string }>` and `await` it — required by Next 15+/16.
-- **KineticHero was the only Phase 2 component I had to update.** Adding `\n` handling was a small additive change and doesn't touch Phase 3/4 behaviour — both paths still work.
-
-## What is NOT done
-- `/people-and-environment` (Phase 6)
-- `/work-with-us`, `/media`, `/contact`, the contact API route and MDX press releases (Phase 7)
-- Animation polish pass (Phase 8)
-- Performance / SEO / accessibility audit + deploy (Phase 9)
-
-## Exact next step
-Begin **Phase 6** — `app/people-and-environment/page.tsx`. Import `PEOPLE_ENVIRONMENT` and the `FARM_MARKERS` / `TIMELINE_ITEMS` / `OUR_STORY.values` as needed.
-
-Structural outline (per the Phase 6 prompt):
-1. `<KineticHero>` with headline `"550 people. Three regions.|One standard — theirs."` (the `|` + italic-gold accent path is already supported in `KineticHero` — no changes needed), eyebrow "Our People", `imageSeed={100}`, primary CTA "Work with us" → `/work-with-us`, subheadline from `PEOPLE_ENVIRONMENT.hero.subheadline`.
-2. `<SplitScreenParallax imageSeed={40} imageLeft>` — `PEOPLE_ENVIRONMENT.ourPeople.body1` + `body2`.
-3. **Directors grid** — 3-card first row + 2-card second row (centred), reading from `PEOPLE_ENVIRONMENT.directors`. Each card has a small avatar (`ImagePlaceholder width=80 height=80 rounded-full` with `seed={director.imageSeed}`), name, title, role. Below: `PEOPLE_ENVIRONMENT.boardNote`. The five director names, titles, roles and image seeds are already in Phase 2 content.
-4. **Fourth Generation statement** — centred, harvest-gold HR above, `PEOPLE_ENVIRONMENT.fourthGenStatement`, ghost-link CTA "Join the team" → `/work-with-us`.
-5. **Environment tabs** — Radix `Tabs.Root defaultValue="biosecurity"`. Four tabs (Biosecurity / Water / Carbon / Zero Waste) reading from `PEOPLE_ENVIRONMENT.environment.{biosecurity|water|carbon|iqf}`. Biosecurity tab has a crimson Badge ("Panama TR4-Free — 3 consecutive years") beside the body. Water tab has two `StatCounter`s (8830 ML licences, 2000 ML private). Carbon tab has a shimmer progress bar. Zero Waste tab has an image + a StatCounter (50+ IQF jobs).
-6. `<LivingPhotoGrid seeds={[10,30,40,100,110,130,90,80]} captions={…}>`.
-7. `<GoldCalloutBand>` with the Foodbank headline "50,000 Queensland schoolchildren. Mackays bananas. Every week." + `PEOPLE_ENVIRONMENT.community.foodbankBody` + an external CTA to the Foodbank partner story.
+1. **KineticHero** — `PEOPLE_ENVIRONMENT.hero`. The headline uses the `|` delimiter ("550 people. Three regions.|One standard — theirs.") which the Phase 5 multi-line KineticHero renders as two lines, the second in Lora italic harvest-gold. `imageSeed={100}`, primary CTA "Work with us" → `/work-with-us`. No code change needed on KineticHero.
+2. **Our People SplitScreenParallax** — `imageLeft`, `ourPeopleImage.seed = 40`, wrapping a `SectionHeader` ("Our Team" / "The people are the product.") plus the two paragraph bodies `ourPeople.body1` / `body2`.
+3. **DirectorsGrid** — new page-local server component. First row `grid-cols-1 md:grid-cols-3` (Gavin / Barrie / Stephen), second row `grid-cols-1 md:grid-cols-2 md:max-w-[66%] md:mx-auto` (Cameron / Daniel). Each card has a round 80 px portrait, name → crimson on hover, uppercase tracking dust title, Lora ink-mid role paragraph, and a hover `-translate-y-0.5` + `shadow-[0_8px_24px_rgba(20,20,19,0.08)]`. `boardNote` rendered centred below the grid. Reads the five directors directly from `PEOPLE_ENVIRONMENT.directors`.
+4. **Fourth-Generation statement** — centred, `w-16 h-[3px] bg-harvest-gold mx-auto mb-10`, Lora italic 22px body `fourthGenStatement`, and a ghost-link CTA "Join the team →" linking to `/work-with-us` via the new `fourthGenCta` content field.
+5. **Environment tabs** — `SectionHeader` ("Our Commitment to the Land" / "We steward, we don't just farm."), followed by the new `EnvironmentTabs` Radix component.
+6. **LivingPhotoGrid** — 8 captioned images from `PEOPLE_ENVIRONMENT.lifePhotoGrid` (seeds `[10,30,40,100,110,130,90,80]` with captions).
+7. **GoldCalloutBand (Foodbank)** — `community.eyebrow = "Foodbank Queensland"`, headline "50,000 Queensland schoolchildren. Mackays bananas. Every week.", body `community.foodbankBody`, CTA to the Foodbank partnership page.
 
 Metadata:
 - title: `People & Environment | Mackays — Our Team, Biosecurity and Sustainability`
 - description: `The 550+ people behind Australia's largest banana operation. Biosecurity, carbon commitments, IQF zero-waste processing, and community partnerships.`
 
-Content extensions likely needed for Phase 6:
-- `PEOPLE_ENVIRONMENT.sectionLabels` (eyebrow/headline pairs for Our Team, Leadership, Environment tabs, Fourth Generation, Community)
-- `PEOPLE_ENVIRONMENT.environment.tabsLabels` for the tab trigger labels
-- `PEOPLE_ENVIRONMENT.environment.biosecurityBadge` string ("Panama TR4-Free — 3 consecutive years")
-- `PEOPLE_ENVIRONMENT.environment.waterStats` array with `{ value, suffix, label }`
-- `PEOPLE_ENVIRONMENT.environment.carbonFootnote`
-- `PEOPLE_ENVIRONMENT.lifePhotoGrid` with `{ seed, caption }` pairs (same pattern as `HOME.lifePhotoGrid`)
-- `PEOPLE_ENVIRONMENT.community.cta` (label + external href)
+### New components
+
+**`src/components/people-environment/EnvironmentTabs.tsx`** — client component.
+- Built on `@radix-ui/react-tabs`, `defaultValue="biosecurity"`.
+- Single prop: `content: EnvironmentContent`. All tab labels, bodies, badge text, stats and images come from content.
+- `TAB_ORDER` array drives the trigger order (`biosecurity → water → carbon → iqf`), so trigger labels and content panels stay in sync.
+- Active trigger styling via Radix data attributes: `data-[state=active]:text-crimson data-[state=active]:border-b-2 data-[state=active]:border-harvest-gold`. Focus-visible rings pass through too.
+- Per-tab panels:
+  - **Biosecurity** — 2-col grid, crimson Badge ("Panama TR4-Free — 3 consecutive years") above the body, right-column image from `biosecurityImage.seed` (10).
+  - **Water** — 2-col grid, body on the left, two `StatCounter`s on the right (`8830 ML` licensed entitlements + `2000 ML` private agreement), each driven by `waterStats` content.
+  - **Carbon** — single column, body, uppercase `carbonProgressLabel`, harvest-gold shimmer progress bar (2/3 filled, with `role="progressbar"` + `aria-valuenow={66}` for accessibility), footnote `carbonFootnote`. The shimmer uses the new `animate-shimmer` Tailwind animation and respects `motion-reduce:animate-none`.
+  - **Zero Waste (iqf)** — 2-col grid, image from `iqfImage.seed` (130) on the left, body + `StatCounter` (50+ new Tully jobs) on the right.
+
+**`src/components/people-environment/DirectorsGrid.tsx`** — server component.
+- Props: `{ eyebrow, headline, directors, boardNote }`.
+- Renders `SectionHeader` then two grid rows (3 + 2) with an inner `DirectorCard` helper. All colour tokens are Tailwind variables; no inline styles.
+- The round 80 px portrait uses a `<div class="relative w-20 h-20 rounded-full overflow-hidden">` wrapping `<ImagePlaceholder fill>` so Next/Image can still calculate a correct layout.
+
+**`src/components/people-environment/index.ts`** — barrel for the two components.
+
+### Content layer extensions — `PEOPLE_ENVIRONMENT`
+Rewritten to support every section label, tab label and presentational
+detail the page needs, with no inline strings:
+
+- `ourPeopleImage: { seed, alt }` — image for the Our People SplitScreenParallax
+- `fourthGenCta: CtaLink` — "Join the team" → `/work-with-us`
+- `sectionLabels.leadership: { eyebrow, headline }` — "Leadership" / "Guided by those who grew up here."
+- `environment` rebuilt from a `{biosecurity,water,carbon,iqf}` string map into a richer structure:
+  - `eyebrow`, `headline` — "Our Commitment to the Land" / "We steward, we don't just farm."
+  - `tabLabels: EnvironmentTabLabels` — per-tab trigger label
+  - `bodies: EnvironmentTabBodies` — per-tab body copy (moved from top-level to `.bodies.*`)
+  - `biosecurityBadge: string` — "Panama TR4-Free — 3 consecutive years"
+  - `biosecurityImage: { seed, alt }`
+  - `waterStats: EnvironmentWaterStat[]` — two entries with `value`, `suffix`, `label`
+  - `carbonProgressLabel: string` + `carbonFootnote: string`
+  - `iqfImage: { seed, alt }` + `iqfStat: { value, suffix, label }`
+- `community` now includes `eyebrow`, `headline`, `foodbankBody` and `cta` (label + external href). The `foodbankBody` field is unchanged.
+- `lifePhotoGrid: HomePhotoGridItem[]` — 8 `{ seed, caption }` pairs, reusing the `HomePhotoGridItem` interface already defined for the home page.
+
+New types added to `src/content/types.ts`:
+- `EnvironmentTabBodies`, `EnvironmentTabKey`, `EnvironmentTabLabels`
+- `EnvironmentWaterStat`, `EnvironmentContent`
+- `PeopleEnvironmentSectionLabels`, `PeopleEnvironmentCommunity`
+
+### Tailwind / globals update
+- `tailwind.config.ts` gains a `shimmer` keyframe (`background-position: -200% 0 → 200% 0`) and a matching `animate-shimmer` utility (`2.2s ease-in-out infinite`), used by the Carbon tab progress bar.
+
+## Quality gates
+- `pnpm tsc --noEmit` — clean (exit 0)
+- `pnpm build` — clean; **12 prerendered routes total** now:
+  - `/`, `/our-story`, `/our-produce`, 6 crop pages under SSG, `/people-and-environment`, `/_not-found`
+- Zero inline copy in `app/people-and-environment/page.tsx` — section labels, tab labels, badge text, stat labels, progress label, footnote, CTA labels and Foodbank copy all come from `@/content`
+- No hardcoded hex in the new components. `EnvironmentTabs` uses CSS vars for the shimmer gradient (`var(--harvest-gold)`, `var(--harvest-gold-dark)`). All other colours go through Tailwind tokens.
+- `prefers-reduced-motion` honoured by the Carbon progress bar (`motion-reduce:animate-none`); `StatCounter` already honours it from Phase 2; `LivingPhotoGrid` and `KineticHero` already guard from Phase 2; Radix Tabs themselves don't animate, so nothing else needs a guard.
+- Focus-visible handling on Radix Tabs triggers, the DirectorsGrid card (implicit via inherited `<article>` + focus-within if a link is added later), the ghost-link CTA, and the foodbank CTA button.
+
+## Known notes / decisions
+- **Progress bar is decorative at 2/3.** The carbon audit is in progress, not a measured milestone, so the bar is a sentiment indicator rather than a real metric. The body copy and footnote make that explicit ("Audit underway. 2025 results pending."). `aria-valuenow={66}` is set for screen-reader consistency, but the label on the progressbar is the `carbonProgressLabel` content field rather than a hardcoded string. Worth a client tweak on launch if a measured number becomes available.
+- **`PEOPLE_ENVIRONMENT.environment.bodies`** replaces the previous flat `environment: { biosecurity, water, carbon, iqf }` shape. No other file in the repo referenced the old shape (the Phase 6 build is its only consumer), so the rename is contained.
+- **DirectorsGrid is page-local** under `src/components/people-environment/` — same convention as the page-local `BrandStatement` (home) and `SplitHero` (our-story) from earlier phases. Shared section components live under `src/components/sections/`.
+- **Gen 3 names are shared** between the FamilyTree (our-story) and DirectorsGrid (people & environment) — both read from `PEOPLE_ENVIRONMENT.directors`, so any edit to the director roster flows to both pages automatically.
+- **No GSAP in this phase.** The page sections that have entry animations (`KineticHero`, `SplitScreenParallax`, `LivingPhotoGrid`) inherit their guarded animations from Phase 2/5. The new components don't add new animations beyond the already-configured Tailwind shimmer.
+- **Foodbank CTA is external** (`https://www.foodbank.org.au/meet-a-food-producer-mackays-marketing/`). `Button` already handles external `href`s by rendering `<a target="_blank" rel="noopener noreferrer">` from Phase 2.
+
+## What is NOT done
+- `/work-with-us`, `/media`, `/contact`, the contact API route and the three MDX press releases (Phase 7)
+- Animation polish pass (Phase 8) — SplitText, page transitions, microinteraction audit, mobile animation reductions
+- Performance / SEO / accessibility audit + deploy (Phase 9)
+
+## Exact next step
+Begin **Phase 7** — three pages in one session.
+
+1. **Work With Us** — `app/work-with-us/page.tsx`:
+   - `<KineticHero headline="Come grow with us." imageSeed={30}>` with `WORK_WITH_US.hero.subheadline` and primary CTA pointing at the Dayforce portal (already in content as `pillars`, `roles`, `opportunities`).
+   - **Why Mackays** 4-column grid of `WORK_WITH_US.pillars` with alternating `border-t-[3px]` (crimson/harvest-gold/sage-field/crimson) and oversized `01`-`04` background numbers (same treatment as `ValuesTriptych`).
+   - **Role categories** 3-column grid of 6 Lucide-iconed role cards from `WORK_WITH_US.roles` with a 40 px `bg-parchment-deep` circle icon per role.
+   - **Current Opportunities** Radix `Accordion.Root type="single" collapsible` reading from `WORK_WITH_US.opportunities`. Trigger: role title + location + type pill + `ChevronDown` that rotates 180° when open. Content: responsibilities paragraph + gold Button linking to Dayforce.
+   - `GoldCalloutBand` "Always Recruiting" — `WORK_WITH_US.alwaysRecruiting`.
+
+2. **Media** — `app/media/page.tsx`:
+   - Static header (`h-[45vh] bg-parchment-warm`) with eyebrow + large headline + subheadline from `MEDIA.hero`.
+   - 3-col press-releases grid from `MEDIA.pressReleases` (date in JetBrains Mono crimson, `line-clamp-2` headline, `line-clamp-3` excerpt, `Button variant="ghost-link"` to `/media/${slug}`).
+   - Media contact block from `MEDIA.mediaContact`.
+   - Create three MDX files under `content/media/` with frontmatter (title/date/excerpt/slug) wired via Contentlayer2 — or, if Contentlayer2 still has React-19 compatibility friction, read the press releases from `MEDIA.pressReleases` directly and render `/media/[slug]` as a static route from the content layer. **Recommend the latter** to avoid a Contentlayer upgrade detour mid-phase.
+   - `app/media/[slug]/page.tsx` — simple Lora-prose article page.
+
+3. **Contact** — `app/contact/page.tsx`:
+   - Header from `CONTACT.headline` / `subheadline`.
+   - Two-column layout: React Hook Form + Zod form (POST to `/api/contact`) on the left, three office cards on the right, then a static `<QldFarmMap markers={[FARM_MARKERS[0]]} interactionDisabled>` below the cards.
+   - Member badges from `CONTACT.badges`.
+   - **`app/api/contact/route.ts`** — server route using `resend` + `zod`. Validate body → `resend.emails.send({ from: 'website@mackays.com.au', to: 'info@mackays.com.au', … })` → `NextResponse.json({ success: true })` / field-level error responses.
+
+4. Content extensions for Phase 7:
+   - `WORK_WITH_US.sectionLabels` (eyebrow/headline pairs for Why Mackays, Role Categories, Current Opportunities)
+   - `WORK_WITH_US` role `icon` strings already typed; add a small ICON_MAP in the page or a shared util
+   - `MEDIA.sectionLabels` if needed; `MEDIA.pressReleases` is already complete from Phase 2
+   - `CONTACT.form.fields` — labels, placeholders, select options, submit button label, success + error messages (to keep copy out of inline strings)
+   - `CONTACT.memberBadges` already covered by `CONTACT.badges`.
 
 ## Files added this phase
-- `app/our-produce/page.tsx`
-- `app/our-produce/[crop]/page.tsx`
-- `src/components/sections/BentoProduceGrid.tsx`
-- `src/components/sections/SupplyChainExplainer.tsx`
+- `app/people-and-environment/page.tsx`
+- `src/components/people-environment/EnvironmentTabs.tsx`
+- `src/components/people-environment/DirectorsGrid.tsx`
+- `src/components/people-environment/index.ts`
 
 ## Files modified this phase
-- `SPRINT.md` (rewritten for Phase 5)
+- `SPRINT.md` (rewritten for Phase 6)
 - `HANDOFF.md` (this file)
-- `src/content/types.ts` (new: `SupplyChainIcon`, `SupplyChainStep`, `BadgeTone`, `BentoGridItem`, `ProduceOverview`, `CropPageLabels`; rewrote `ProduceContent.overview`)
-- `src/content/produce.ts` (rewrote `PRODUCE.overview` with hero/bento/supplyChain/iqfBand/tradeBand; added `PRODUCE.cropPage` labels)
-- `src/components/sections/index.ts` (re-exports `BentoProduceGrid` + `SupplyChainExplainer`)
-- `src/components/sections/KineticHero.tsx` (multi-line headline support via `\n` + existing `|` accent)
+- `src/content/types.ts` (new types for environment tabs, water stats, community, section labels)
+- `src/content/people-environment.ts` (restructured environment, added sectionLabels, lifePhotoGrid, fourthGenCta, community shape)
+- `tailwind.config.ts` (shimmer keyframe + animate-shimmer)

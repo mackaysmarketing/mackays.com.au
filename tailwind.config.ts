@@ -46,10 +46,15 @@ const config: Config = {
           '0%, 100%': { transform: 'scaleY(0.2)', transformOrigin: 'top' },
           '50%': { transform: 'scaleY(1)', transformOrigin: 'top' },
         },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
       },
       animation: {
         marquee: 'marquee 30s linear infinite',
         'scroll-indicator': 'scroll-indicator 2s ease-in-out infinite',
+        shimmer: 'shimmer 2.2s ease-in-out infinite',
       },
     },
   },

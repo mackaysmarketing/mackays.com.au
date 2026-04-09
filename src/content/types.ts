@@ -325,11 +325,64 @@ export interface Director {
   imageSeed: number
 }
 
-export interface EnvironmentTabContent {
+export interface EnvironmentTabBodies {
   biosecurity: string
   water: string
   carbon: string
   iqf: string
+}
+
+export type EnvironmentTabKey = 'biosecurity' | 'water' | 'carbon' | 'iqf'
+
+export interface EnvironmentTabLabels {
+  biosecurity: string
+  water: string
+  carbon: string
+  iqf: string
+}
+
+export interface EnvironmentWaterStat {
+  value: number
+  suffix: string
+  label: string
+}
+
+export interface EnvironmentContent {
+  eyebrow: string
+  headline: string
+  tabLabels: EnvironmentTabLabels
+  bodies: EnvironmentTabBodies
+  biosecurityBadge: string
+  biosecurityImage: {
+    seed: number
+    alt: string
+  }
+  waterStats: EnvironmentWaterStat[]
+  carbonFootnote: string
+  carbonProgressLabel: string
+  iqfImage: {
+    seed: number
+    alt: string
+  }
+  iqfStat: {
+    value: number
+    suffix: string
+    label: string
+  }
+}
+
+export interface PeopleEnvironmentSectionLabels {
+  leadership: {
+    eyebrow: string
+    headline: string
+  }
+}
+
+export interface PeopleEnvironmentCommunity {
+  eyebrow: string
+  headline: string
+  foodbankBody: string
+  cta: CtaLink
 }
 
 export interface PeopleEnvironmentContent {
@@ -348,9 +401,14 @@ export interface PeopleEnvironmentContent {
   directors: Director[]
   boardNote: string
   fourthGenStatement: string
-  environment: EnvironmentTabContent
-  community: {
-    foodbankBody: string
+  fourthGenCta: CtaLink
+  sectionLabels: PeopleEnvironmentSectionLabels
+  environment: EnvironmentContent
+  community: PeopleEnvironmentCommunity
+  lifePhotoGrid: HomePhotoGridItem[]
+  ourPeopleImage: {
+    seed: number
+    alt: string
   }
 }
 
