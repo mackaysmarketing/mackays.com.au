@@ -9,22 +9,46 @@ import {
   ValuesTriptych,
 } from '@/components/sections'
 import { SplitHero } from '@/components/our-story'
+import { ArticleJsonLd } from '@/components/seo/StructuredData'
 import {
   OUR_STORY,
   PEOPLE_ENVIRONMENT,
+  SITE,
   TIMELINE_ITEMS,
 } from '@/content'
 
+const OUR_STORY_DESCRIPTION =
+  "From one hand-cleared block in 1945 to 5,800 hectares across three growing regions. The story of Australia's largest banana-growing family."
+
 export const metadata: Metadata = {
-  title:
-    'Our Story | Mackays — 80 Years of Family Farming in Far North Queensland',
-  description:
-    "From one hand-cleared block in 1945 to 5,800 hectares across three growing regions. The story of Australia's largest banana-growing family.",
+  title: 'Our Story — 80 Years of Family Farming',
+  description: OUR_STORY_DESCRIPTION,
+  alternates: { canonical: '/our-story' },
+  openGraph: {
+    type: 'article',
+    title: 'Our Story | Mackays — 80 Years of Family Farming',
+    description: OUR_STORY_DESCRIPTION,
+    url: '/our-story',
+    publishedTime: '2025-01-01',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Our Story | Mackays — 80 Years of Family Farming',
+    description: OUR_STORY_DESCRIPTION,
+  },
 }
 
 export default function OurStoryPage() {
   return (
     <>
+      <ArticleJsonLd
+        headline={OUR_STORY.hero.headline}
+        description={OUR_STORY_DESCRIPTION}
+        url={`${SITE.url}/our-story`}
+        image={`https://picsum.photos/seed/110/1600/1000`}
+        datePublished="2025-01-01"
+      />
+
       {/* 1. Split Hero */}
       <SplitHero
         eyebrow={OUR_STORY.hero.eyebrow}

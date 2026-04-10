@@ -1,24 +1,21 @@
 'use client'
 
 import { Fragment } from 'react'
+import { SITE } from '@/content'
 
-const MARQUEE_ITEMS: string[] = [
-  'Coles',
-  'Woolworths',
-  'ALDI',
-  'Supplying Australia since 1945',
-  "13% of Australia's Bananas",
-  '550+ Team Members',
-  '5,800 Hectares',
-]
-
-function MarqueeRow({ ariaHidden = false }: { ariaHidden?: boolean }) {
+function MarqueeRow({
+  items,
+  ariaHidden = false,
+}: {
+  items: string[]
+  ariaHidden?: boolean
+}) {
   return (
     <div
       className="flex gap-12 items-center whitespace-nowrap shrink-0 pr-12"
       aria-hidden={ariaHidden || undefined}
     >
-      {MARQUEE_ITEMS.map((item, index) => (
+      {items.map((item, index) => (
         <Fragment key={`${item}-${index}`}>
           <span className="font-heading text-sm font-medium text-dust/60">
             {item}
@@ -40,8 +37,8 @@ export function MarqueeBand() {
       aria-label="Mackays supply partners and facts"
     >
       <div className="flex animate-marquee group-hover:[animation-play-state:paused]">
-        <MarqueeRow />
-        <MarqueeRow ariaHidden />
+        <MarqueeRow items={SITE.marquee} />
+        <MarqueeRow items={SITE.marquee} ariaHidden />
       </div>
     </section>
   )

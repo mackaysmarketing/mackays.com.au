@@ -3,10 +3,24 @@ import Link from 'next/link'
 import { MEDIA } from '@/content'
 import { formatDate } from '@/lib/format-date'
 
+const MEDIA_DESCRIPTION =
+  'Press releases, biosecurity updates and milestones from Mackays Marketing, Tully and the Atherton Tablelands.'
+
 export const metadata: Metadata = {
-  title: 'Media | Mackays — News From the Farm',
-  description:
-    'Press releases, biosecurity updates and milestones from the Mackays business, Tully and the Atherton Tablelands.',
+  title: 'Media — News From the Farm',
+  description: MEDIA_DESCRIPTION,
+  alternates: { canonical: '/media' },
+  openGraph: {
+    type: 'website',
+    title: 'Media | Mackays — News From the Farm',
+    description: MEDIA_DESCRIPTION,
+    url: '/media',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Media | Mackays',
+    description: MEDIA_DESCRIPTION,
+  },
 }
 
 export default function MediaPage() {

@@ -13,11 +13,24 @@ import {
 } from '@/components/people-environment'
 import { PEOPLE_ENVIRONMENT } from '@/content'
 
+const PEOPLE_DESCRIPTION =
+  "The 550+ people behind Australia's largest banana operation. Biosecurity, carbon commitments, IQF zero-waste processing, and community partnerships."
+
 export const metadata: Metadata = {
-  title:
-    'People & Environment | Mackays — Our Team, Biosecurity and Sustainability',
-  description:
-    "The 550+ people behind Australia's largest banana operation. Biosecurity, carbon commitments, IQF zero-waste processing, and community partnerships.",
+  title: 'People & Environment',
+  description: PEOPLE_DESCRIPTION,
+  alternates: { canonical: '/people-and-environment' },
+  openGraph: {
+    type: 'website',
+    title: 'People & Environment | Mackays',
+    description: PEOPLE_DESCRIPTION,
+    url: '/people-and-environment',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'People & Environment | Mackays',
+    description: PEOPLE_DESCRIPTION,
+  },
 }
 
 export default function PeopleAndEnvironmentPage() {

@@ -21,10 +21,23 @@ import {
 import type { ProduceSlide } from '@/components/sections/HorizontalProduceTape'
 
 export const metadata: Metadata = {
-  title:
-    "Mackays | Australia's Leading Tropical Produce Grower | Far North Queensland",
+  title: "Australia's Leading Tropical Produce Grower",
   description:
     'Fourth-generation family farming from Tully, Far North Queensland. Bananas, papaya, avocados, cane, cattle and passionfruit supplied to Coles, Woolworths and ALDI.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    title: "Mackays | Australia's Leading Tropical Produce Grower",
+    description:
+      'Fourth-generation family farming from Tully, Far North Queensland. Bananas, papaya, avocados, cane, cattle and passionfruit supplied to Coles, Woolworths and ALDI.',
+    url: '/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Mackays | Australia's Leading Tropical Produce Grower",
+    description:
+      'Fourth-generation family farming from Tully, Far North Queensland. Bananas, papaya, avocados, cane, cattle and passionfruit.',
+  },
 }
 
 function buildProduceSlides(): ProduceSlide[] {

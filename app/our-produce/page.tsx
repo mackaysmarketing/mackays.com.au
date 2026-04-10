@@ -10,10 +10,24 @@ import {
 } from '@/components/sections'
 import { PRODUCE, PRODUCE_DATA } from '@/content'
 
+const PRODUCE_DESCRIPTION =
+  'Six crops from three distinct growing regions in Far North Queensland: bananas, red papaya, avocados, sugar cane, grass-fed cattle and passionfruit.'
+
 export const metadata: Metadata = {
-  title: 'Our Produce | Mackays — Six Crops, Three Regions, One Standard',
-  description:
-    PRODUCE.overview.intro,
+  title: 'Our Produce — Six Crops, Three Regions, One Standard',
+  description: PRODUCE_DESCRIPTION,
+  alternates: { canonical: '/our-produce' },
+  openGraph: {
+    type: 'website',
+    title: 'Our Produce | Mackays — Six Crops, Three Regions',
+    description: PRODUCE_DESCRIPTION,
+    url: '/our-produce',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Our Produce | Mackays',
+    description: PRODUCE_DESCRIPTION,
+  },
 }
 
 export default function OurProduceOverviewPage() {

@@ -4,10 +4,24 @@ import { QldFarmMap } from '@/components/sections'
 import { ContactForm } from '@/components/contact'
 import { CONTACT, FARM_MARKERS } from '@/content'
 
+const CONTACT_DESCRIPTION =
+  "Get in touch with Mackays Marketing in Tully, Far North Queensland. Farming office, marketing, retail & trade enquiries and media lines."
+
 export const metadata: Metadata = {
-  title: 'Contact | Mackays — Farming, Marketing, Retail & Trade',
-  description:
-    "Get in touch with Mackays Marketing in Tully, Far North Queensland. Farming office, marketing, retail & trade enquiries and media lines.",
+  title: 'Contact — Farming, Marketing, Retail & Trade',
+  description: CONTACT_DESCRIPTION,
+  alternates: { canonical: '/contact' },
+  openGraph: {
+    type: 'website',
+    title: 'Contact | Mackays',
+    description: CONTACT_DESCRIPTION,
+    url: '/contact',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact | Mackays',
+    description: CONTACT_DESCRIPTION,
+  },
 }
 
 export default function ContactPage() {

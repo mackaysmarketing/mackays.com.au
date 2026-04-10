@@ -14,7 +14,15 @@ export interface SiteMeta {
   legalName: string
   tagline: string
   metaDescription: string
+  url: string
+  foundingDate: string
   address: string
+  addressLocality: string
+  addressRegion: string
+  postalCode: string
+  addressCountry: string
+  latitude: number
+  longitude: number
   phone: string
   phoneTel: string
   emails: {
@@ -25,6 +33,8 @@ export interface SiteMeta {
   }
   copyright: string
   foodbankPartner: string
+  marquee: string[]
+  keywords: string[]
 }
 
 export interface StatItem {

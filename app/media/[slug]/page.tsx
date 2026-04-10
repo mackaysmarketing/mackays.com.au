@@ -18,10 +18,24 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const pr = MEDIA.pressReleases.find((item) => item.slug === slug)
-  if (!pr) return { title: 'Article not found | Mackays' }
+  if (!pr) return { title: 'Article not found' }
+  const canonical = `/media/${pr.slug}`
   return {
-    title: `${pr.headline} | Mackays`,
+    title: pr.headline,
     description: pr.excerpt,
+    alternates: { canonical },
+    openGraph: {
+      type: 'article',
+      title: `${pr.headline} | Mackays`,
+      description: pr.excerpt,
+      url: canonical,
+      publishedTime: pr.date,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: pr.headline,
+      description: pr.excerpt,
+    },
   }
 }
 

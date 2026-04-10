@@ -1,30 +1,50 @@
-# Sprint: Phase 8 — Animation Polish
+# Sprint: Phase 9 — Performance, SEO, Accessibility, Deploy (Final)
 Date: 2026-04-10
 
 ## Scope
-Polish pass across existing animated components. No new pages, no new
-section components, no content changes. Add a shared
-`useReducedMotion` hook, a `PageTransition` wrapper, a microinteraction
-audit (Button / ProduceCard / Nav), a `StickyTimeline` scrub + verify,
-mobile animation reductions in every GSAP callback, and a
-`rotationX: -15` addition to the `KineticHero` word-split reveal
-(GSAP SplitText deferred — club licence not confirmed).
+Final quality pass before launch. Target Lighthouse ≥ 90/95/95
+(Performance/Accessibility/SEO). Image + bundle audit, full metadata
+coverage, JSON-LD structured data, robots/sitemap, accessibility hardening
+(skip-to-content, focus ring verification, axe-core in dev), Vercel
+deploy scaffolding, comprehensive final handoff.
+
+Also: close out the pre-Phase-9 carry items — `MarqueeBand` inline strings.
 
 ## Acceptance Criteria
-- [ ] `src/hooks/useReducedMotion.ts` — client hook; reads + listens to `(prefers-reduced-motion: reduce)`; returns boolean; no SSR issues
-- [ ] Every animated component uses the hook instead of inline `window.matchMedia(...).matches`
-- [ ] GSAP callbacks that depend on reduced motion re-run when the value changes (`useGSAP({ dependencies: [prefersReducedMotion] })`)
-- [ ] `src/components/layout/PageTransition.tsx` — Framer Motion `AnimatePresence mode="wait"` keyed on `usePathname()`, initial `{opacity:0,y:12}` → animate `{opacity:1,y:0}` → exit `{opacity:0,y:-12}`, duration 0.25s, cubic-bezier `[0, 0, 0.2, 1]`
-- [ ] `app/layout.tsx` wraps `{children}` (the `<main>` content) in `<PageTransition>` — NOT `Navigation` or `Footer`
-- [ ] `Button`: primary/gold get `hover:scale-[1.01]` + crimson-pale/harvest-gold-pale hover shadow ring; all variants keep `active:scale-[0.98]`; transitions at 150 ms
-- [ ] `HorizontalProduceTape` + `BentoProduceGrid` produce cards: image `scale-[1.05]` on hover, title `-translate-y-[3px]` (or existing `-translate-y-1` confirmed close)
-- [ ] `Navigation` desktop links get an `::after` underline that scales X 0 → 1 from the left on hover, 200 ms. Active link stays permanently underlined.
-- [ ] `StickyTimeline` uses `scrub: 1` on the year-tracking ScrollTrigger (not `true`, not a larger number); per-item fade-in can keep `toggleActions`; no `markers: true` anywhere in the codebase (production safety)
-- [ ] Every GSAP callback computes `isMobile = window.innerWidth < 768` and scales `stagger * 0.5`, `y * 0.6`, `duration * 0.8` on mobile
-- [ ] `SplitScreenParallax` parallax stays disabled on mobile (already was — verify)
-- [ ] `KineticHero` word-reveal adds `rotationX: -15` to the existing `gsap.from` tween (SplitText upgrade deferred; GSAP Club licence not confirmed)
-- [ ] `pnpm tsc --noEmit` passes
-- [ ] `pnpm build` passes with zero GSAP console errors and all 19 routes still prerendered
+
+### Performance
+- [ ] `grep "<img " src/ app/` returns zero — every image flows through `next/image` via `ImagePlaceholder`
+- [ ] Every `ImagePlaceholder fill` consumer passes `sizes`; every hero uses `priority`
+- [ ] `@next/bundle-analyzer` wired into `next.config.ts` under `ANALYZE=true`
+- [ ] Bundle report produced at least once; document any chunks > 200 KB
+
+### SEO
+- [ ] Every page (`app/**/page.tsx`) exports `metadata` with unique `title` (< 60) + `description` (< 160) + `openGraph` + `twitter.card`
+- [ ] `app/layout.tsx` sets `metadataBase`, default `openGraph`, default `twitter`, shared `authors`, `keywords`, `creator`, `publisher`
+- [ ] `app/sitemap.ts` generates all static + SSG routes with `lastModified`
+- [ ] `app/robots.ts` returns `Allow: /` + sitemap URL
+- [ ] JSON-LD: Organization on `/`, Article on `/our-story`, Product on each crop page
+
+### Accessibility
+- [ ] Skip-to-content link on every page: sr-only, reveals on focus, crimson background, `href="#main-content"`
+- [ ] `<main id="main-content">` on root layout
+- [ ] `@axe-core/react` dev-only wiring in root layout
+- [ ] Focus ring on every interactive element (2 px crimson) — verified Phase 2/8
+- [ ] One `<h1>` per page — verified across all routes
+- [ ] All form inputs have associated labels — verified in Phase 7
+
+### Deploy scaffolding
+- [ ] `.env.example` documenting `NEXT_PUBLIC_MAPBOX_TOKEN`, `RESEND_API_KEY`, `NEXT_PUBLIC_SITE_URL`
+- [ ] `vercel.json` if any config overrides are required
+- [ ] HANDOFF.md contains full DNS instructions, placeholder image brief, deferred items
+
+### Content clean-up
+- [ ] `MarqueeBand` inline strings moved to `SITE.marquee` (or equivalent); component reads from content
+
+### Quality gates
+- [ ] `pnpm tsc --noEmit` clean
+- [ ] `pnpm build` clean, 19 routes prerendered
+- [ ] `ANALYZE=true pnpm build` produces a report without errors
 
 ## Definition of Done
-Committed on main. HANDOFF.md updated with Phase 9 kickoff (performance, SEO, accessibility, deploy).
+Committed on main. HANDOFF.md is the launch-ready hand-off document.

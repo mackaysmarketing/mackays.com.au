@@ -11,10 +11,24 @@ import {
 } from '@/components/work-with-us'
 import { WORK_WITH_US } from '@/content'
 
+const WORK_DESCRIPTION =
+  "Roles across farming, packing, IQF, logistics, maintenance and office operations at Australia's largest banana grower. Year-round work, local hire, real training."
+
 export const metadata: Metadata = {
-  title: 'Work With Us | Mackays — Careers in Far North Queensland Farming',
-  description:
-    "Roles across farming, packing, IQF, logistics, maintenance and office operations at Australia's largest banana grower. Year-round work, local hire, real training.",
+  title: 'Work With Us — Careers in Far North Queensland Farming',
+  description: WORK_DESCRIPTION,
+  alternates: { canonical: '/work-with-us' },
+  openGraph: {
+    type: 'website',
+    title: 'Work With Us | Mackays — Careers in FNQ',
+    description: WORK_DESCRIPTION,
+    url: '/work-with-us',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Work With Us | Mackays',
+    description: WORK_DESCRIPTION,
+  },
 }
 
 export default function WorkWithUsPage() {

@@ -11,6 +11,7 @@ import {
   PullQuoteSection,
   SplitScreenParallax,
 } from '@/components/sections'
+import { ProductJsonLd } from '@/components/seo/StructuredData'
 import {
   CROP_SLUGS,
   PRODUCE,
@@ -42,12 +43,26 @@ export async function generateMetadata({
   const crop = getCrop(slug)
   if (!crop) {
     return {
-      title: 'Crop not found | Mackays',
+      title: 'Crop not found',
     }
   }
+  const description = `${crop.tagline} Grown by Mackays Marketing in Far North Queensland.`
+  const canonical = `/our-produce/${crop.slug}`
   return {
-    title: `${crop.name} | Mackays — Far North Queensland`,
-    description: `${crop.tagline} Grown by Mackays Marketing in Far North Queensland.`,
+    title: `${crop.name} — Far North Queensland`,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: 'website',
+      title: `${crop.name} | Mackays — Far North Queensland`,
+      description,
+      url: canonical,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${crop.name} | Mackays`,
+      description,
+    },
   }
 }
 
@@ -88,6 +103,8 @@ export default async function CropPage({
 
   return (
     <>
+      <ProductJsonLd crop={crop} />
+
       {/* 1. Hero */}
       <section className="relative h-[70vh] min-h-[520px] overflow-hidden">
         <ImagePlaceholder
