@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Menu, X, ChevronDown } from 'lucide-react'
+import { MackaysLogo } from '@/components/ui/MackaysLogo'
 import { primaryNav, ctaLink, siteMeta } from '@/content/navigation'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
@@ -60,10 +61,9 @@ export function Navigation() {
         <div className="max-w-7xl mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
           <Link
             href="/"
-            className="font-heading font-bold text-ink tracking-tight text-xl md:text-[22px]"
             aria-label={`${siteMeta.brand} — home`}
           >
-            {siteMeta.brand}
+            <MackaysLogo width={130} />
           </Link>
 
           <nav
@@ -161,11 +161,8 @@ export function Navigation() {
           aria-modal="true"
         >
           <div className="flex items-center justify-between px-6 h-16">
-            <Link
-              href="/"
-              className="font-heading font-bold text-ink tracking-tight text-xl"
-            >
-              {siteMeta.brand}
+            <Link href="/" aria-label={`${siteMeta.brand} — home`}>
+              <MackaysLogo width={110} />
             </Link>
             <button
               type="button"

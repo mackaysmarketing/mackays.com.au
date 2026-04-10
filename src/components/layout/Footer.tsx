@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { MackaysLogo } from '@/components/ui/MackaysLogo'
 import { footerNav, siteMeta } from '@/content/navigation'
 
 export function Footer() {
@@ -7,9 +8,9 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
-            <p className="font-heading font-bold text-parchment text-xl">
-              {siteMeta.brand}
-            </p>
+            <Link href="/" aria-label={`${siteMeta.brand} — home`}>
+              <MackaysLogo width={120} variant="light" />
+            </Link>
             <p className="font-body italic text-dust/60 text-sm mt-2">
               {siteMeta.tagline}
             </p>
